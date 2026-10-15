@@ -1,4 +1,5 @@
 import { CommitNumberInput } from './CommitNumberInput'
+import { SliderRow } from './SliderRow'
 import { clampBpm, doubleBpm, halveBpm, MAX_BPM, MIN_BPM } from '../logic/tempo'
 
 interface Props {
@@ -12,7 +13,7 @@ const smallButton =
 
 export function TempoControl({ bpm, onChange }: Props) {
   return (
-    <section aria-label="Tempo" className="flex flex-col items-center gap-4">
+    <section aria-label="Tempo" className="flex w-full flex-col items-center gap-4">
       <div className="flex items-center gap-4">
         <button type="button" className={smallButton} onClick={() => onChange(clampBpm(bpm - 1))} disabled={bpm <= MIN_BPM} aria-label="Decrease tempo">
           −
@@ -33,14 +34,14 @@ export function TempoControl({ bpm, onChange }: Props) {
         </button>
       </div>
 
-      <input
-        type="range"
+      <SliderRow
+        display={String(bpm)}
+        value={bpm}
         min={MIN_BPM}
         max={MAX_BPM}
-        value={bpm}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className="w-full accent-indigo-600 dark:accent-indigo-400"
-        aria-label="Tempo slider"
+        onChange={onChange}
+        ariaLabel="Tempo slider"
+        ariaValueText={`${bpm} BPM`}
       />
 
       <div className="flex gap-2">

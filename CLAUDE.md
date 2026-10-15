@@ -34,8 +34,9 @@ Before saying work is finished, run `npx tsc -b`, `npm run lint`, `npm test` and
 
 - **Tempo range:** 20–300 BPM, whole numbers only (`src/logic/tempo.ts`). Halving and doubling clamp to this range.
 - **Steps:** each step is one beat in the bar. There are 1–16 steps, shown in a grid of four per row (step 5 starts a second row), and each is `'normal' | 'accent' | 'mute'`. Clicking a step cycles normal → accent → mute. The count can be changed with the −/+ buttons or typed into the Steps number input; `setStepCount` adds new steps as normal and removes steps from the end. The default is `['accent','normal','normal','normal']`. The step grid replaces the separate accent on/off control from the MVP spec.
+- **Drops:** a toggle button labelled just "Drops" (its state is shown by the filled colour and `aria-pressed`, with no on/off text), with a 0–100% density slider (5% steps), placed under the step grid. The button sits on its own line, aligned left, above the slider and percentage. When on, every beat that would sound is silenced with probability = density, rolled fresh each time (`isDropped` in `src/logic/drops.ts`). Accents can be dropped too, and steps the user has muted aren't counted as drops. The roll happens in the engine's `schedule()` when the beat is booked, never in React. While playing, the highlight still moves onto a dropped beat but shows a dashed outline instead of the amber ring. The slider can be adjusted while Drops is off.
 - **Sounds:** synthesized for now (sine tone with a fast decay: normal ≈1000 Hz, accent ≈1700 Hz and louder). Audio samples are a possible future feature.
-- **Saved settings:** stored in `localStorage` with the keys `nome:bpm`, `nome:steps`, `nome:volume` and `nome:theme`.
+- **Saved settings:** stored in `localStorage` with the keys `nome:bpm`, `nome:steps`, `nome:volume`, `nome:drops` (`{enabled, density}`) and `nome:theme`.
 - **Theme:** follows the OS setting until the user toggles it. After that the choice is stored as `'light'|'dark'`.
 - **Keyboard:** **Space = Start/Stop** and **Enter/Return = tap tempo**, handled for the whole page in `useKeyboardShortcuts.ts`. The shortcuts are skipped while typing (so Enter in the BPM field confirms the value), and on a button reached with Tab (navigation mode is tracked: Tab sets keyboard mode, any pointerdown clears it), so Tab users can still press buttons with Space or Enter. A button focused by a mouse click doesn't block them; `preventDefault` stops that button from double-firing.
 
@@ -52,13 +53,14 @@ src/
     steps.ts              # StepState, cycleStep, setStepCount, addStep, removeStep, isSteps (1–16)
     tapTempo.ts           # TapTempo class: average of last 6 taps, reset after 2s gap
     volume.ts             # faderToGain (squared curve), isVolume
+    drops.ts              # DropSettings, isDropped(density, random), isDropSettings
   hooks/
     useMetronome.ts       # owns one engine instance; syncs bpm/steps/volume; exposes isPlaying/activeStep/toggle
     usePersistentState.ts # useState + localStorage with a validator fallback
     useTheme.ts           # toggles the `dark` class on <html>
     useTapTempo.ts        # tap(timeMs) → BPM via TapTempo, plus flash state
     useKeyboardShortcuts.ts # global Space → start/stop, Enter → tap
-  components/             # presentational: TempoControl, StepGrid, CommitNumberInput, StartStopButton,
+  components/             # presentational: TempoControl, StepGrid, DropsControl, SliderRow, CommitNumberInput, StartStopButton,
                           # TapTempoButton, VolumeFader, ThemeToggle
   App.tsx                 # wires persistent state → hooks → components
 ```
@@ -75,7 +77,7 @@ The engine uses the lookahead scheduler from Chris Wilson's article "A Tale of T
 - Stopping disconnects the per-run `bus` GainNode, which silences clicks that were booked but haven't played yet.
 - If scheduling falls behind by more than `MAX_LAG_S`, for example after the device sleeps, it skips ahead rather than playing a burst of late clicks.
 - Volume uses `setTargetAtTime` so moving the fader doesn't cause clicks or pops.
-- The visual beat uses a `{step, time}` queue, drained by `requestAnimationFrame` against `currentTime - outputLatency`, so the highlight matches what's audible.
+- The visual beat uses a `{step, dropped, time}` queue, drained by `requestAnimationFrame` against `currentTime - outputLatency`, so the highlight matches what's audible.
 
 ## Conventions
 
@@ -88,6 +90,7 @@ The engine uses the lookahead scheduler from Chris Wilson's article "A Tale of T
 ## Known gotchas
 
 - **iOS:** the silent switch mutes Web Audio. The footer tells users about this.
+- **Sliders:** build every slider with `SliderRow` (label column `w-16`, the slider, value column `w-10`) so all slider tracks share the same left and right edges. The tempo slider has no label on purpose; its empty label column keeps it aligned.
 - **Number inputs:** use `CommitNumberInput` (used by the BPM and Steps fields). It keeps a draft string and commits only on blur or Enter, so values can be typed without being clamped mid-typing.
 - **Tap button timing:** the Tap button uses `onPointerDown` and the event's `timeStamp`, so tap times are accurate. Its `onClick` only taps when `e.detail === 0` (activated from the keyboard), so a mouse tap isn't counted twice.
 - **Don't use `:focus-visible` to detect keyboard focus** in key handlers. Chromium applies it to *any* focused element once a key is pressed, so a mouse-focused button already matches by the time the handler runs.

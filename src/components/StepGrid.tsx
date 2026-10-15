@@ -4,6 +4,8 @@ import { CommitNumberInput } from './CommitNumberInput'
 interface Props {
   steps: StepState[]
   activeStep: number
+  /** The active beat was silenced by Drops: show a dashed outline instead of the normal highlight. */
+  activeDropped: boolean
   onChange: (steps: StepState[]) => void
 }
 
@@ -17,7 +19,10 @@ const countButton =
   'size-9 rounded-full text-lg font-semibold bg-zinc-200 text-zinc-800 hover:bg-zinc-300 ' +
   'dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700 disabled:opacity-40 disabled:pointer-events-none'
 
-export function StepGrid({ steps, activeStep, onChange }: Props) {
+const ACTIVE_STYLE = 'scale-110 ring-4 ring-amber-400 ring-offset-2 ring-offset-white dark:ring-offset-zinc-900'
+const DROPPED_STYLE = 'outline-2 outline-offset-4 outline-dashed outline-zinc-400 dark:outline-zinc-500'
+
+export function StepGrid({ steps, activeStep, activeDropped, onChange }: Props) {
   return (
     <section aria-label="Steps" className="flex flex-col items-center gap-4">
       <div className="flex items-center gap-3">
@@ -50,7 +55,7 @@ export function StepGrid({ steps, activeStep, onChange }: Props) {
               aria-label={`Step ${i + 1}: ${state}. Click to change.`}
               title="Click to cycle: normal → accent → mute"
               className={`w-full rounded-md transition-[height,transform,box-shadow] duration-100 ${STEP_STYLE[state]} ${
-                i === activeStep ? 'scale-110 ring-4 ring-amber-400 ring-offset-2 ring-offset-white dark:ring-offset-zinc-900' : ''
+                i === activeStep ? (activeDropped ? DROPPED_STYLE : ACTIVE_STYLE) : ''
               }`}
             />
           </div>

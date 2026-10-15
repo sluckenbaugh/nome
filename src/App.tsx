@@ -1,3 +1,4 @@
+import { DropsControl } from './components/DropsControl'
 import { StartStopButton } from './components/StartStopButton'
 import { StepGrid } from './components/StepGrid'
 import { TapTempoButton } from './components/TapTempoButton'
@@ -9,6 +10,7 @@ import { useMetronome } from './hooks/useMetronome'
 import { usePersistentState } from './hooks/usePersistentState'
 import { useTapTempo } from './hooks/useTapTempo'
 import { useTheme } from './hooks/useTheme'
+import { DEFAULT_DROPS, isDropSettings } from './logic/drops'
 import { DEFAULT_STEPS, isSteps } from './logic/steps'
 import { DEFAULT_BPM, isBpm } from './logic/tempo'
 import { DEFAULT_VOLUME, isVolume } from './logic/volume'
@@ -17,8 +19,9 @@ export default function App() {
   const [bpm, setBpm] = usePersistentState('nome:bpm', DEFAULT_BPM, isBpm)
   const [steps, setSteps] = usePersistentState('nome:steps', DEFAULT_STEPS, isSteps)
   const [volume, setVolume] = usePersistentState('nome:volume', DEFAULT_VOLUME, isVolume)
+  const [drops, setDrops] = usePersistentState('nome:drops', DEFAULT_DROPS, isDropSettings)
   const { isDark, toggleTheme } = useTheme()
-  const { isPlaying, activeStep, toggle } = useMetronome({ bpm, steps, volume })
+  const { isPlaying, activeStep, activeDropped, toggle } = useMetronome({ bpm, steps, volume, drops })
   const { tap, flash } = useTapTempo(setBpm)
   useKeyboardShortcuts({ onSpace: toggle, onEnter: tap })
 
@@ -31,8 +34,11 @@ export default function App() {
 
       <main className="mx-auto mt-6 flex max-w-md flex-col items-center gap-8 rounded-3xl bg-white px-6 py-8 shadow-sm dark:bg-zinc-900 max-sm:mx-4">
         <TempoControl bpm={bpm} onChange={setBpm} />
-        <StepGrid steps={steps} activeStep={activeStep} onChange={setSteps} />
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className="flex w-full flex-col items-center gap-4">
+          <StepGrid steps={steps} activeStep={activeStep} activeDropped={activeDropped} onChange={setSteps} />
+          <DropsControl drops={drops} onChange={setDrops} />
+        </div>
+        <div className="grid w-full grid-cols-2 gap-3">
           <StartStopButton isPlaying={isPlaying} onToggle={toggle} />
           <TapTempoButton flash={flash} onTap={tap} />
         </div>

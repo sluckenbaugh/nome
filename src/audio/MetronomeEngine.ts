@@ -1,4 +1,5 @@
 import { playClick } from './clicks'
+import { DEFAULT_DROPS, isDropped, type DropSettings } from '../logic/drops'
 import { DEFAULT_STEPS, type StepState } from '../logic/steps'
 import { clampBpm, DEFAULT_BPM } from '../logic/tempo'
 import { DEFAULT_VOLUME, faderToGain } from '../logic/volume'
@@ -12,17 +13,25 @@ const START_DELAY_S = 0.05
 /** If scheduling falls this far behind (e.g. the device slept), skip ahead instead of firing a burst of late clicks. */
 const MAX_LAG_S = 0.2
 
-interface ScheduledBeat {
-  step: number
+interface ScheduledBeat extends ActiveBeat {
   time: number
 }
 
-type StepListener = (step: number) => void
+/** The beat currently being heard. `step` is -1 when stopped; `dropped` means Drops silenced it. */
+export interface ActiveBeat {
+  step: number
+  dropped: boolean
+}
+
+type BeatListener = (beat: ActiveBeat) => void
+
+const STOPPED: ActiveBeat = { step: -1, dropped: false }
 
 export interface EngineSettings {
   bpm: number
   steps: StepState[]
   volume: number
+  drops: DropSettings
 }
 
 /**
@@ -41,18 +50,20 @@ export class MetronomeEngine {
   private bpm: number
   private steps: StepState[]
   private volume: number
+  private drops: DropSettings
 
   private running = false
   private nextStep = 0
   private nextBeatTime = 0
   private queue: ScheduledBeat[] = []
-  private displayedStep = -1
-  private listeners = new Set<StepListener>()
+  private displayed: ActiveBeat = STOPPED
+  private listeners = new Set<BeatListener>()
 
   constructor(settings: Partial<EngineSettings> = {}) {
     this.bpm = clampBpm(settings.bpm ?? DEFAULT_BPM)
     this.steps = settings.steps ?? DEFAULT_STEPS
     this.volume = settings.volume ?? DEFAULT_VOLUME
+    this.drops = settings.drops ?? DEFAULT_DROPS
   }
 
   get isRunning(): boolean {
@@ -77,8 +88,13 @@ export class MetronomeEngine {
     }
   }
 
-  /** Subscribe to the step that is currently sounding (-1 when stopped). Returns an unsubscribe function. */
-  subscribe(listener: StepListener): () => void {
+  /** Takes effect from the next unscheduled beat (within ~100ms). */
+  setDrops(drops: DropSettings): void {
+    this.drops = drops
+  }
+
+  /** Subscribe to the beat that is currently being heard. Returns an unsubscribe function. */
+  subscribe(listener: BeatListener): () => void {
     this.listeners.add(listener)
     return () => this.listeners.delete(listener)
   }
@@ -110,7 +126,7 @@ export class MetronomeEngine {
     this.bus?.disconnect()
     this.bus = null
     this.queue = []
-    this.setDisplayedStep(-1)
+    this.setDisplayed(STOPPED)
   }
 
   dispose(): void {
@@ -152,8 +168,10 @@ export class MetronomeEngine {
     while (this.nextBeatTime < ctx.currentTime + SCHEDULE_AHEAD_S) {
       const step = this.nextStep
       const state = this.steps[step] ?? 'normal'
-      if (state !== 'mute') playClick(ctx, this.nextBeatTime, state, this.bus)
-      this.queue.push({ step, time: this.nextBeatTime })
+      // Rolled per beat at schedule time, so each pass through the bar gets fresh random drops.
+      const dropped = state !== 'mute' && this.drops.enabled && isDropped(this.drops.density)
+      if (state !== 'mute' && !dropped) playClick(ctx, this.nextBeatTime, state, this.bus)
+      this.queue.push({ step, dropped, time: this.nextBeatTime })
 
       this.nextBeatTime += 60 / this.bpm
       this.nextStep = (step + 1) % this.steps.length
@@ -167,17 +185,17 @@ export class MetronomeEngine {
 
     // Sound leaves the speakers roughly `outputLatency` after currentTime reaches it.
     const heardTime = ctx.currentTime - (ctx.outputLatency || ctx.baseLatency || 0)
-    let step = this.displayedStep
+    let beat = this.displayed
     while (this.queue.length > 0 && this.queue[0].time <= heardTime) {
-      step = this.queue.shift()!.step
+      beat = this.queue.shift()!
     }
-    this.setDisplayedStep(step)
+    this.setDisplayed(beat)
     this.rafId = requestAnimationFrame(this.draw)
   }
 
-  private setDisplayedStep(step: number): void {
-    if (step === this.displayedStep) return
-    this.displayedStep = step
-    this.listeners.forEach((listener) => listener(step))
+  private setDisplayed(beat: ActiveBeat): void {
+    if (beat.step === this.displayed.step && beat.dropped === this.displayed.dropped) return
+    this.displayed = { step: beat.step, dropped: beat.dropped }
+    this.listeners.forEach((listener) => listener(this.displayed))
   }
 }
