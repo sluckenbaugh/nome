@@ -31,7 +31,7 @@ Clicks are scheduled with a lookahead scheduler on the Web Audio clock (see Chri
 - **Space** — start/stop
 - **Return/Enter** — tap tempo
 - (When a button is focused with Tab, Space/Enter press that button instead.)
-- Steps: click a step to cycle normal → accent → mute; −/+ to change the number of steps (1–7)
+- Steps: click a step to cycle normal → accent → mute; change the number of steps (1–16) with −/+ or by typing it in; steps wrap four per row
 - Settings (tempo, steps, volume, theme) are saved in `localStorage`.
 
 ## Deployment

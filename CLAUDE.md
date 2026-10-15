@@ -33,7 +33,7 @@ Before saying work is finished, run `npx tsc -b`, `npm run lint`, `npm test` and
 ## Product decisions (settled — don't re-ask)
 
 - **Tempo range:** 20–300 BPM, whole numbers only (`src/logic/tempo.ts`). Halving and doubling clamp to this range.
-- **Steps:** each step is one beat in the bar. There are 1–7 steps, and each is `'normal' | 'accent' | 'mute'`. Clicking a step cycles normal → accent → mute. The default is `['accent','normal','normal','normal']`. The step grid replaces the separate accent on/off control from the MVP spec.
+- **Steps:** each step is one beat in the bar. There are 1–16 steps, shown in a grid of four per row (step 5 starts a second row), and each is `'normal' | 'accent' | 'mute'`. Clicking a step cycles normal → accent → mute. The count can be changed with the −/+ buttons or typed into the Steps number input; `setStepCount` adds new steps as normal and removes steps from the end. The default is `['accent','normal','normal','normal']`. The step grid replaces the separate accent on/off control from the MVP spec.
 - **Sounds:** synthesized for now (sine tone with a fast decay: normal ≈1000 Hz, accent ≈1700 Hz and louder). Audio samples are a possible future feature.
 - **Saved settings:** stored in `localStorage` with the keys `nome:bpm`, `nome:steps`, `nome:volume` and `nome:theme`.
 - **Theme:** follows the OS setting until the user toggles it. After that the choice is stored as `'light'|'dark'`.
@@ -49,7 +49,7 @@ src/
     clicks.ts             # playClick(ctx, time, kind, dest) — swap point for samples
   logic/                  # pure, framework-free, unit-tested
     tempo.ts              # clampBpm, halveBpm, doubleBpm, isBpm, MIN/MAX/DEFAULT_BPM
-    steps.ts              # StepState, cycleStep, addStep, removeStep, isSteps
+    steps.ts              # StepState, cycleStep, setStepCount, addStep, removeStep, isSteps (1–16)
     tapTempo.ts           # TapTempo class: average of last 6 taps, reset after 2s gap
     volume.ts             # faderToGain (squared curve), isVolume
   hooks/
@@ -58,7 +58,7 @@ src/
     useTheme.ts           # toggles the `dark` class on <html>
     useTapTempo.ts        # tap(timeMs) → BPM via TapTempo, plus flash state
     useKeyboardShortcuts.ts # global Space → start/stop, Enter → tap
-  components/             # presentational: TempoControl, StepGrid, StartStopButton,
+  components/             # presentational: TempoControl, StepGrid, CommitNumberInput, StartStopButton,
                           # TapTempoButton, VolumeFader, ThemeToggle
   App.tsx                 # wires persistent state → hooks → components
 ```
@@ -88,7 +88,7 @@ The engine uses the lookahead scheduler from Chris Wilson's article "A Tale of T
 ## Known gotchas
 
 - **iOS:** the silent switch mutes Web Audio. The footer tells users about this.
-- **Number inputs:** the BPM field keeps a draft string and clamps only on blur or Enter, so values can be typed without being clamped mid-typing.
+- **Number inputs:** use `CommitNumberInput` (used by the BPM and Steps fields). It keeps a draft string and commits only on blur or Enter, so values can be typed without being clamped mid-typing.
 - **Tap button timing:** the Tap button uses `onPointerDown` and the event's `timeStamp`, so tap times are accurate. Its `onClick` only taps when `e.detail === 0` (activated from the keyboard), so a mouse tap isn't counted twice.
 - **Don't use `:focus-visible` to detect keyboard focus** in key handlers. Chromium applies it to *any* focused element once a key is pressed, so a mouse-focused button already matches by the time the handler runs.
 - **Browser testing:** Playwright's Chromium is cached in `~/Library/Caches/ms-playwright`, but `chromium-cli` isn't installed. Drive the app with a scratch Playwright script, passing `executablePath` pointing at the cached `chrome-headless-shell`. A headless browser can't confirm the sound itself; manual checks for drift and audio quality still need a person listening.

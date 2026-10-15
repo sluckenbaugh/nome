@@ -1,4 +1,5 @@
-import { addStep, cycleStep, MAX_STEPS, MIN_STEPS, removeStep, type StepState } from '../logic/steps'
+import { addStep, cycleStep, MAX_STEPS, MIN_STEPS, removeStep, setStepCount, type StepState } from '../logic/steps'
+import { CommitNumberInput } from './CommitNumberInput'
 
 interface Props {
   steps: StepState[]
@@ -7,9 +8,9 @@ interface Props {
 }
 
 const STEP_STYLE: Record<StepState, string> = {
-  accent: 'h-16 bg-indigo-600 dark:bg-indigo-500',
-  normal: 'h-11 bg-zinc-400 dark:bg-zinc-500',
-  mute: 'h-11 bg-transparent border-2 border-dashed border-zinc-300 dark:border-zinc-700',
+  accent: 'h-14 bg-indigo-600 dark:bg-indigo-500',
+  normal: 'h-9 bg-zinc-400 dark:bg-zinc-500',
+  mute: 'h-9 bg-transparent border-2 border-dashed border-zinc-300 dark:border-zinc-700',
 }
 
 const countButton =
@@ -18,32 +19,45 @@ const countButton =
 
 export function StepGrid({ steps, activeStep, onChange }: Props) {
   return (
-    <section aria-label="Steps" className="flex flex-col items-center gap-3">
+    <section aria-label="Steps" className="flex flex-col items-center gap-4">
       <div className="flex items-center gap-3">
         <button type="button" className={countButton} onClick={() => onChange(removeStep(steps))} disabled={steps.length <= MIN_STEPS} aria-label="Remove step">
           −
         </button>
-        <div className="flex h-20 items-end gap-2">
-          {steps.map((state, i) => (
-            <button
-              key={i}
-              type="button"
-              onClick={() => onChange(cycleStep(steps, i))}
-              aria-label={`Step ${i + 1}: ${state}. Click to change.`}
-              title="Click to cycle: normal → accent → mute"
-              className={`w-9 rounded-md transition-[height,transform,box-shadow] duration-100 ${STEP_STYLE[state]} ${
-                i === activeStep ? 'scale-110 ring-4 ring-amber-400 ring-offset-2 ring-offset-white dark:ring-offset-zinc-900' : ''
-              }`}
-            />
-          ))}
-        </div>
+        <label className="flex items-center gap-2 text-sm font-medium text-zinc-500">
+          Steps
+          <CommitNumberInput
+            min={MIN_STEPS}
+            max={MAX_STEPS}
+            value={steps.length}
+            onCommit={(count) => onChange(setStepCount(steps, count))}
+            aria-label={`Number of steps (${MIN_STEPS}–${MAX_STEPS})`}
+            className="w-14 rounded-md border border-zinc-300 bg-transparent py-1 text-center text-base font-semibold tabular-nums text-zinc-900 outline-none [appearance:textfield] focus:border-indigo-500 dark:border-zinc-700 dark:text-zinc-100 [&::-webkit-inner-spin-button]:appearance-none"
+          />
+        </label>
         <button type="button" className={countButton} onClick={() => onChange(addStep(steps))} disabled={steps.length >= MAX_STEPS} aria-label="Add step">
           +
         </button>
       </div>
-      <p className="text-xs text-zinc-500">
-        {steps.length} {steps.length === 1 ? 'step' : 'steps'} · tap a step to cycle normal → accent → mute
-      </p>
+
+      {/* Four steps per row; step 5 starts the next row. */}
+      <div className="grid grid-cols-4 gap-x-3 gap-y-2">
+        {steps.map((state, i) => (
+          <div key={i} className="flex h-16 w-12 items-end justify-center">
+            <button
+              type="button"
+              onClick={() => onChange(cycleStep(steps, i))}
+              aria-label={`Step ${i + 1}: ${state}. Click to change.`}
+              title="Click to cycle: normal → accent → mute"
+              className={`w-full rounded-md transition-[height,transform,box-shadow] duration-100 ${STEP_STYLE[state]} ${
+                i === activeStep ? 'scale-110 ring-4 ring-amber-400 ring-offset-2 ring-offset-white dark:ring-offset-zinc-900' : ''
+              }`}
+            />
+          </div>
+        ))}
+      </div>
+
+      <p className="text-xs text-zinc-500">Tap a step to cycle normal → accent → mute</p>
     </section>
   )
 }
