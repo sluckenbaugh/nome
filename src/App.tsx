@@ -31,7 +31,7 @@ export default function App() {
   useKeyboardShortcuts({ onSpace: toggle, onEnter: tap })
 
   return (
-    <div className="min-h-dvh bg-zinc-50 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
+    <div className="min-h-dvh bg-page font-sans text-ink">
       <header className="mx-auto flex max-w-md items-center justify-between px-4 pt-4">
         <h1 className="text-2xl font-bold tracking-tight">.nome</h1>
         <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
