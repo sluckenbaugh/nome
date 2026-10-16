@@ -12,7 +12,7 @@
  * so the whole look can be retuned here. Dark values swap in under `.dark`.
  */
 :root {
-  /* Desktop behind the window: sky blue by day, night-sky navy in dark mode. */
+  /* Desktop behind the window: sky blue by day, twilight indigo (the sky at dusk) in dark mode. */
   --nome-page: #b0def3;
   --nome-page-dot: #a3d5ec;
   /* Window/menu outlines and the hard drop shadow. */
@@ -29,8 +29,8 @@
 }
 
 .dark {
-  --nome-page: #0e1a2b;
-  --nome-page-dot: #132238;
+  --nome-page: #1d1a36;
+  --nome-page-dot: #24203f;
   --nome-line: #8c7f63;
   --nome-shadow: #000;
   --nome-panel: #332d24;

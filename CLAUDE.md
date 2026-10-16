@@ -90,7 +90,7 @@ The engine uses the lookahead scheduler from Chris Wilson's article "A Tale of T
 The app looks like a classic Mac application in a warm beige palette with a green accent (`#5ebd3e`, the green from Apple's original rainbow logo; `accent-deep` `#2f7d24` for green text on light backgrounds), built on the `styling` branch. It started as a "vintage hardware" design and was reworked to feel like software rather than physical gear. The controls are flat: 1px outlines, no bevels, glows or drop shadows inside the window, and pressed or "on" states shown by inverting the colours.
 
 - **Page and chrome:**
-  - A dithered `.desktop` pattern fills the page: sky blue (`#b0def3`) in light mode, night-sky navy (`#0e1a2b`) in dark mode. Text placed directly on it (the footer) uses `text-ink`; `ink-muted` is too faint on the blue.
+  - A dithered `.desktop` pattern fills the page: sky blue (`#b0def3`) in light mode, twilight indigo (`#1d1a36`, the sky at dusk) in dark mode. Text placed directly on it (the footer) uses `text-ink`; `ink-muted` is too faint on the blue.
   - A sticky classic menu bar (`MenuBar`) sits at the top: ".nome", then a **Sound** menu (kits, duplicating the Sound dropdown) and a **View** menu (Light / Dark / Match System).
   - The app sits in a `Window`: a pinstriped title bar with the title "Controls" (no close box), a 1px outline and a hard offset shadow (`--color-shadow`), with square corners.
   - Sections are classic group boxes (`Module`): a thin outline with the title sitting in the top border.
