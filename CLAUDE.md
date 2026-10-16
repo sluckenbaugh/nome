@@ -96,7 +96,8 @@ The app looks like a classic Mac application in a warm beige/amber palette, buil
   - Sections are classic group boxes (`Module`): a thin outline with the title (pixel font) sitting in the top border.
 - **Colours:** defined once as CSS variables in `src/index.css` (`--nome-*`, with dark overrides under `.dark`) and exposed to Tailwind via `@theme inline` as `page`, `line`, `shadow`, `body`, `panel`, `ink`, `ink-muted`, `rule`, `key`, `amber`, `amber-deep`, `lcd` (near-black in both themes). Use these names (`bg-panel`, `border-line`, ...); don't use raw Tailwind palette colours (zinc, indigo, ...).
 - **Fonts:**
-  - Pixelify Sans (`font-pixel`, latin 500/700) for the menu bar, window title, group-box titles, and the tempo and step-count numbers.
+  - Pixelify Sans (`font-pixel`, latin 500/700) for the menu bar, window title and group-box titles only.
+  - IBM Plex Mono (`font-mono`, latin 600, `tabular-nums`) for the tempo and step-count numbers.
   - Barlow Condensed (latin 500/600/700) for everything else.
   - All are bundled, with no Google Fonts requests.
 - **Shared pieces:**
@@ -105,7 +106,7 @@ The app looks like a classic Mac application in a warm beige/amber palette, buil
   - In `index.css`: `.fader` (classic flat slider: an outlined track with a plain thumb that inverts while dragged), `.dither` (50% grey dither), `.desktop` and `.title-stripes`.
 - **Inverted colours in dark mode:** `ink` is light in dark mode, so "inverted" (`bg-ink`) becomes a cream fill. Where amber text has to sit on a dark fill in both themes (Start while playing, accent pads on their beat), use `bg-lcd` instead.
 - **Start key:** amber, wrapped in the classic default-button ring. While playing it turns near-black (`bg-lcd`) with amber text, and its LED lights red.
-- **Number fields:** the tempo and step count are classic Mac text fields (cream `bg-key`, 1px outline, an amber focus outline) with the number in bold `font-pixel`. The tempo field has a `BeatLight` bottom-left and "BPM" bottom-right. (They replaced earlier 7-segment LCD displays.)
+- **Number fields:** the tempo and step count are classic Mac text fields (cream `bg-key`, 1px outline, an amber focus outline) with the number in semibold `font-mono` (IBM Plex Mono). The tempo field has a `BeatLight` bottom-left and "BPM" bottom-right. (They replaced earlier 7-segment LCD displays.)
 - **Beat feedback:**
   - The LED above the current pad lights, and the pad flashes inverted (accents go near-black with an amber ▲). On a dropped beat the LED shows a hollow ring and the pad doesn't invert.
   - `BeatLight` (a flat outlined dot) flashes amber once per beat: brighter on accents, a hollow ring on dropped beats, and nothing on muted steps. It restarts by remounting on the engine's `ActiveBeat.count`, which increases every beat, so repeats of the same step still flash.

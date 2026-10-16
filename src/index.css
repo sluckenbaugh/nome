@@ -4,6 +4,7 @@
 @import "@fontsource/barlow-condensed/latin-700.css";
 @import "@fontsource/pixelify-sans/latin-500.css";
 @import "@fontsource/pixelify-sans/latin-700.css";
+@import "@fontsource/ibm-plex-mono/latin-600.css";
 
 /* Dark mode is driven by a `dark` class on <html> (see useTheme) so users can override the OS setting. */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -58,6 +59,7 @@
 
   --font-sans: "Barlow Condensed", ui-sans-serif, system-ui, sans-serif;
   --font-pixel: "Pixelify Sans", ui-monospace, monospace;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 
 html {
