@@ -16,12 +16,15 @@ export function TapTempoButton({ flash, onTap }: Props) {
       onClick={(e) => e.detail === 0 && onTap(e.timeStamp)}
       aria-keyshortcuts="Enter"
       aria-label="Tap tempo"
-      // A large square key beside the tempo field: LED, label and the Return hint stacked.
-      className={`${KEY} w-full flex-col gap-2 text-lg`}
+      // Small screens: a large square key (LED, label, "↵ Return" stacked). Wide layout: the narrower
+      // tall key with just "↵".
+      className={`${KEY} w-full flex-col gap-2 text-lg md:gap-1 md:text-sm`}
     >
-      <Led on={flash} className="size-3" />
+      <Led on={flash} className="size-3 md:size-2" />
       Tap
-      <span className="text-[10px] tracking-widest text-ink-muted">↵ Return</span>
+      <span className="text-[10px] tracking-widest text-ink-muted md:text-[9px]">
+        ↵<span className="md:hidden"> Return</span>
+      </span>
     </button>
   )
 }

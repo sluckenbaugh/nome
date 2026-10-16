@@ -15,31 +15,33 @@ interface Props {
 
 export function TempoControl({ bpm, onChange, tapKey, beatLight }: Props) {
   return (
-    // A container, so the number size can follow the Tempo box's own width (narrow phones and the
-    // two-column wide layout) rather than the screen width.
+    // A container, so the number size can follow the Tempo box's own width rather than the screen.
     <div className="@container flex flex-col gap-3">
-      {/* The tempo field and the Tap key split the width as two equal squares. */}
-      <div className="grid grid-cols-2 gap-3">
+      {/*
+        Small screens: the tempo field and Tap key split the width as two equal squares, with the
+        -, +, /2 and x2 keys in a row of four beneath them.
+        md and up (wide layout): field on the left, a 2x2 block of keys, and a tall Tap key on the right.
+        Tab order is field, Tap, then the four keys in both layouts.
+      */}
+      <div className="grid grid-cols-4 gap-2 md:grid-cols-[minmax(0,1fr)_2.5rem_2.5rem_3.25rem] md:grid-rows-2">
         {/* Classic text field: editable tempo, with the beat light and units along the bottom. */}
-        <label className="flex aspect-square min-w-0 flex-col rounded-[4px] border border-line bg-key p-3 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent">
+        <label className="col-span-2 flex aspect-square min-w-0 flex-col rounded-[4px] border border-line bg-key p-3 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent md:col-span-1 md:col-start-1 md:row-span-2 md:row-start-1 md:mr-1 md:aspect-auto md:justify-center md:px-3 md:py-2">
           <CommitNumberInput
             min={MIN_BPM}
             max={MAX_BPM}
             value={bpm}
             onCommit={(value) => onChange(clampBpm(value))}
             // Smaller digits in the narrowest boxes so three-digit tempos always fit.
-            className="min-h-0 w-full flex-1 bg-transparent text-center text-4xl leading-none font-semibold tabular-nums text-ink caret-accent outline-none [appearance:textfield] @min-[17rem]:text-5xl [&::-webkit-inner-spin-button]:appearance-none"
+            className="min-h-0 w-full flex-1 bg-transparent text-center text-4xl leading-none font-semibold tabular-nums text-ink caret-accent outline-none [appearance:textfield] @min-[17rem]:text-5xl md:flex-none md:text-right [&::-webkit-inner-spin-button]:appearance-none"
             aria-label="Tempo in beats per minute"
           />
-          <span className="flex items-center justify-between">
+          <span className="flex items-center justify-between md:mt-1.5">
             {beatLight}
             <span className="text-[10px] font-bold tracking-[0.2em] text-ink-muted">BPM</span>
           </span>
         </label>
-        <div className="flex aspect-square">{tapKey}</div>
-      </div>
+        <div className="col-span-2 flex aspect-square md:col-span-1 md:col-start-4 md:row-span-2 md:row-start-1 md:aspect-auto">{tapKey}</div>
 
-      <div className="grid grid-cols-4 gap-2">
         <button type="button" className={KEY_SM} onClick={() => onChange(clampBpm(bpm - 1))} disabled={bpm <= MIN_BPM} aria-label="Decrease tempo">
           −
         </button>
