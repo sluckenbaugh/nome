@@ -24,7 +24,7 @@ export function TempoControl({ bpm, onChange, tapKey, beatLight }: Props) {
             max={MAX_BPM}
             value={bpm}
             onCommit={(value) => onChange(clampBpm(value))}
-            className="w-full bg-transparent text-right font-mono text-5xl leading-none font-semibold tabular-nums text-ink caret-amber outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+            className="w-full bg-transparent text-right text-5xl leading-none font-semibold tabular-nums text-ink caret-amber outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
             aria-label="Tempo in beats per minute"
           />
           <span className="mt-1.5 flex items-center justify-between">

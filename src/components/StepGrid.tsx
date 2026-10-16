@@ -55,7 +55,7 @@ export function StepGrid({ steps, activeStep, activeDropped, onChange }: Props) 
         })}
       </div>
 
-      <p className="text-xs text-ink-muted">Tap a pad to cycle normal → accent → mute</p>
+      <p className="text-xs text-ink-muted">Tap a pad: normal → accent → mute</p>
     </div>
   )
 }

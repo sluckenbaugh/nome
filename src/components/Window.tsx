@@ -17,7 +17,7 @@ export function Window({ title, titleAside, children }: Props) {
         <span aria-hidden className="relative bg-panel px-1">
           <span className="block size-3.5 border border-line bg-panel" />
         </span>
-        <h1 className="absolute left-1/2 -translate-x-1/2 bg-panel px-2 font-pixel text-base leading-none font-bold">{title}</h1>
+        <h1 className="absolute left-1/2 -translate-x-1/2 bg-panel px-2 text-base leading-none font-bold">{title}</h1>
         {titleAside && <div className="relative ml-auto bg-panel pl-1">{titleAside}</div>}
       </div>
       <div className="p-3 sm:p-4">{children}</div>

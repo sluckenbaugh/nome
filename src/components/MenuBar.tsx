@@ -104,7 +104,7 @@ export function MenuBar({ appName, menus }: Props) {
   return (
     <div ref={barRef} className="sticky top-0 z-30 border-b border-line bg-panel shadow-[0_1px_0_var(--color-shadow)]">
       <nav aria-label="Menu" className="mx-auto flex h-8 max-w-md items-stretch px-1">
-        <span className="flex items-center px-2 font-pixel text-sm font-bold">{appName}</span>
+        <span className="flex items-center px-2 text-sm font-bold">{appName}</span>
         {menus.map((menu, m) => (
           <div key={menu.label} className="relative flex">
             <button
@@ -117,7 +117,7 @@ export function MenuBar({ appName, menus }: Props) {
               onClick={() => setOpen(open === m ? null : m)}
               onPointerEnter={() => open !== null && open !== m && setOpen(m)}
               onKeyDown={(e) => onTitleKeyDown(e, m)}
-              className={`px-2.5 font-pixel text-sm outline-none focus-visible:underline ${open === m ? 'bg-ink text-panel' : ''}`}
+              className={`px-2.5 text-sm outline-none focus-visible:underline ${open === m ? 'bg-ink text-panel' : ''}`}
             >
               {menu.label}
             </button>
