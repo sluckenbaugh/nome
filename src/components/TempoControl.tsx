@@ -18,10 +18,13 @@ export function TempoControl({ bpm, onChange, tapKey, beatLight }: Props) {
     // A container, so the number size can follow the Tempo box's own width (narrow phones and the
     // two-column wide layout) rather than the screen width.
     <div className="@container flex flex-col gap-3">
-      {/* The tempo field and the Tap key split the width as two equal squares. */}
-      <div className="grid grid-cols-2 gap-3">
+      {/*
+        Small screens: the tempo field and Tap key split the width as two equal squares.
+        md and up: the field takes ~70% and Tap ~30%, with Tap stretched to the field's height.
+      */}
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]">
         {/* Classic text field: editable tempo, with the beat light and units along the bottom. */}
-        <label className="flex aspect-square min-w-0 flex-col rounded-[4px] border border-line bg-key p-3 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent">
+        <label className="flex aspect-square min-w-0 flex-col md:aspect-auto rounded-[4px] border border-line bg-key p-3 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent">
           <CommitNumberInput
             min={MIN_BPM}
             max={MAX_BPM}
@@ -36,7 +39,7 @@ export function TempoControl({ bpm, onChange, tapKey, beatLight }: Props) {
             <span className="text-[10px] font-bold tracking-[0.2em] text-ink-muted">BPM</span>
           </span>
         </label>
-        <div className="flex aspect-square">{tapKey}</div>
+        <div className="flex aspect-square md:aspect-auto">{tapKey}</div>
       </div>
 
       <div className="grid grid-cols-4 gap-2">
