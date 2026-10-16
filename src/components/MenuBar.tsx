@@ -103,7 +103,7 @@ export function MenuBar({ appName, menus }: Props) {
 
   return (
     <div ref={barRef} className="sticky top-0 z-30 border-b border-line bg-panel shadow-[0_1px_0_var(--color-shadow)]">
-      <nav aria-label="Menu" className="mx-auto flex h-8 max-w-md items-stretch px-1">
+      <nav aria-label="Menu" className="mx-auto flex h-8 max-w-md items-stretch px-1 md:max-w-3xl">
         <span className="flex items-center px-2 text-sm font-bold">{appName}</span>
         {menus.map((menu, m) => (
           <div key={menu.label} className="relative flex">

@@ -50,10 +50,15 @@ export default function App() {
           },
         ]}
       />
-      <div className="mx-auto max-w-md px-3 pt-6 sm:pt-10">
+      <div className="mx-auto max-w-md px-3 pt-6 sm:pt-10 md:max-w-3xl">
         <Window title="Metronome">
-          <main className="flex flex-col gap-4">
-            <Module label="Tempo">
+          {/*
+            Phones: one column (Tempo, Steps, Output, Start). Wide screens: Tempo over Output on the
+            left, Steps filling the right column, Start across the bottom. When Steps is taller, the
+            extra height goes to the Output row so Tempo keeps its natural size.
+          */}
+          <main className="flex flex-col gap-4 md:grid md:grid-cols-2 md:grid-rows-[auto_1fr_auto] md:gap-x-5">
+            <Module label="Tempo" className="md:col-start-1 md:row-start-1">
               <TempoControl
                 bpm={bpm}
                 onChange={setBpm}
@@ -62,21 +67,28 @@ export default function App() {
               />
             </Module>
 
-            <Module label="Steps" aside={<StepCount steps={steps} onChange={setSteps} />}>
-              <div className="flex flex-col gap-4">
+            <Module
+              label="Steps"
+              aside={<StepCount steps={steps} onChange={setSteps} />}
+              className="md:col-start-2 md:row-span-2 md:row-start-1"
+            >
+              {/* Pads at the top, Drops pinned to the bottom when the box is stretched. */}
+              <div className="flex flex-1 flex-col justify-between gap-4">
                 <StepGrid steps={steps} activeStep={activeStep} activeDropped={activeDropped} onChange={setSteps} />
                 <DropsControl drops={drops} onChange={setDrops} />
               </div>
             </Module>
 
-            <Module label="Output">
+            <Module label="Output" className="md:col-start-1 md:row-start-2">
               <div className="flex flex-col gap-3">
                 <SoundSelect kits={SOUND_KITS} value={kitId} onChange={setKitId} />
                 <VolumeFader volume={volume} onChange={setVolume} />
               </div>
             </Module>
 
-            <StartStopButton isPlaying={isPlaying} onToggle={toggle} />
+            <div className="md:col-span-2 md:row-start-3">
+              <StartStopButton isPlaying={isPlaying} onToggle={toggle} />
+            </div>
           </main>
         </Window>
       </div>
