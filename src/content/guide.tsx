@@ -24,8 +24,10 @@ export const GUIDE_SECTIONS: GuideSection[] = [
           <strong>Nome is not a drum machine,</strong>
         </p>
         <p>
-          but it is inspired by them. Drum machines can be a great tool for musicians in the shed looking to improve their internal clock. They afford the user the ability to create an “arrangement” through a step sequencer instead of a rigid, constant click. Nome takes this idea and melds it into a simpler tool specifically designed for practice. Nome features a step sequencer (up to 16 steps) that can be customized and even randomized. Each step can be muted, accented or deleted. Instead of being confined to pre-defined time signatures and subdivisions, this sequencer approach is more or less a blank canvas, malleable to the needs of your current musical exploration. And remember, great time is not about playing perfectly on each click but being perfectly cozy in the silence between them. Happy practicing!
+          but it is inspired by them. Drum machines can be a great tool for musicians in the shed looking to improve their internal clock. They afford the user the ability to create an “arrangement” through a step sequencer instead of a rigid, constant click. Nome takes this idea and melds it into a simpler tool specifically designed for practice. Nome features a step sequencer (up to 16 steps) that can be customized and even randomized. Each step can be muted, accented or deleted. Instead of being confined to pre-defined time signatures and subdivisions, this sequencer approach is more or less a blank canvas, malleable to the needs of your current musical exploration. 
         </p>
+        <br />
+        <p>And Remember, great time is not about playing perfectly on each click but being perfectly cozy in the silence between them. Happy practicing!</p>
       </article>
     ),
   },
