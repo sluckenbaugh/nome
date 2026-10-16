@@ -19,15 +19,19 @@ interface ScheduledBeat extends ActiveBeat {
   time: number
 }
 
-/** The beat currently being heard. `step` is -1 when stopped; `dropped` means Drops silenced it. */
+/**
+ * The beat currently being heard. `step` is -1 when stopped; `dropped` means Drops silenced it;
+ * `count` increases every beat (so repeats of the same step are still distinct beats).
+ */
 export interface ActiveBeat {
   step: number
   dropped: boolean
+  count: number
 }
 
 type BeatListener = (beat: ActiveBeat) => void
 
-const STOPPED: ActiveBeat = { step: -1, dropped: false }
+const STOPPED: ActiveBeat = { step: -1, dropped: false, count: 0 }
 
 export interface EngineSettings {
   bpm: number
@@ -60,6 +64,7 @@ export class MetronomeEngine {
 
   private running = false
   private nextStep = 0
+  private beatCount = 0
   private nextBeatTime = 0
   private queue: ScheduledBeat[] = []
   private displayed: ActiveBeat = STOPPED
@@ -130,6 +135,7 @@ export class MetronomeEngine {
     this.bus.connect(this.master!)
     this.running = true
     this.nextStep = 0
+    this.beatCount = 0
     this.nextBeatTime = ctx.currentTime + START_DELAY_S
     this.queue = []
 
@@ -195,7 +201,7 @@ export class MetronomeEngine {
         if (this.samples) playSample(ctx, this.nextBeatTime, state === 'accent' ? this.samples.accent : this.samples.main, this.bus)
         else playClick(ctx, this.nextBeatTime, state, this.bus)
       }
-      this.queue.push({ step, dropped, time: this.nextBeatTime })
+      this.queue.push({ step, dropped, count: ++this.beatCount, time: this.nextBeatTime })
 
       this.nextBeatTime += 60 / this.bpm
       this.nextStep = (step + 1) % this.steps.length
@@ -218,8 +224,8 @@ export class MetronomeEngine {
   }
 
   private setDisplayed(beat: ActiveBeat): void {
-    if (beat.step === this.displayed.step && beat.dropped === this.displayed.dropped) return
-    this.displayed = { step: beat.step, dropped: beat.dropped }
+    if (beat.count === this.displayed.count) return
+    this.displayed = { step: beat.step, dropped: beat.dropped, count: beat.count }
     this.listeners.forEach((listener) => listener(this.displayed))
   }
 }

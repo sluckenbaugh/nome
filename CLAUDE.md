@@ -34,7 +34,7 @@ Before saying work is finished, run `npx tsc -b`, `npm run lint`, `npm test` and
 
 - **Tempo range:** 20–300 BPM, whole numbers only (`src/logic/tempo.ts`). Halving and doubling clamp to this range.
 - **Steps:** each step is one beat in the bar. There are 1–16 steps, shown in a grid of four per row (step 5 starts a second row), and each is `'normal' | 'accent' | 'mute'`. Clicking a step cycles normal → accent → mute. The count can be changed with the −/+ buttons or typed into the Steps number input; `setStepCount` adds new steps as normal and removes steps from the end. The default is `['accent','normal','normal','normal']`. The step grid replaces the separate accent on/off control from the MVP spec.
-- **Drops:** a toggle button labelled just "Drops" (its state is shown by the filled colour and `aria-pressed`, with no on/off text), with a 0–100% density slider (5% steps), placed under the step grid. The button sits on its own line, aligned left, above the slider and percentage. When on, every beat that would sound is silenced with probability = density, rolled fresh each time (`isDropped` in `src/logic/drops.ts`). Accents can be dropped too, and steps the user has muted aren't counted as drops. The roll happens in the engine's `schedule()` when the beat is booked, never in React. While playing, the highlight still moves onto a dropped beat but shows a dashed outline instead of the amber ring. The slider can be adjusted while Drops is off.
+- **Drops:** an LED switch labelled "Drops" (the LED and `aria-pressed` show its state; no on/off text) in the label column of a 0–100% density fader (5% steps), at the bottom of the Steps module. When on, every beat that would sound is silenced with probability = density, rolled fresh each time (`isDropped` in `src/logic/drops.ts`). Accents can be dropped too, and steps the user has muted aren't counted as drops. The roll happens in the engine's `schedule()` when the beat is booked, never in React. While playing, the LED above a dropped beat's pad shows a hollow amber ring instead of lighting, and the pad doesn't press. The fader can be adjusted while Drops is off (it's dimmed).
 - **Sounds:** chosen from a "Sound" dropdown above Volume (`SoundSelect`, built on the custom `Select`). "Classic" is the built-in synthesized click and the default; every other option is a sample kit.
   - **Adding a kit:** create `src/assets/sounds/<folder>/` containing `main.wav` (normal steps) and `accent.wav` (accented steps). `import.meta.glob` in `src/audio/soundKits.ts` picks it up automatically; no code change is needed. The label comes from the folder name (`old-school` → "Old School") and the id is the lowercase folder name. Folders missing either file are skipped.
   - **Files:** WAV only (MP3, AAC and Opus add silence at the start, which makes clicks late). Mono, 48 kHz, 16-bit, accent peak around −1 dBFS, normal 3–6 dB quieter. Keep clicks under about 150ms so they don't overlap at 300 BPM.
@@ -83,7 +83,23 @@ The engine uses the lookahead scheduler from Chris Wilson's article "A Tale of T
 - Stopping disconnects the per-run `bus` GainNode, which silences clicks that were booked but haven't played yet.
 - If scheduling falls behind by more than `MAX_LAG_S`, for example after the device sleeps, it skips ahead rather than playing a burst of late clicks.
 - Volume uses `setTargetAtTime` so moving the fader doesn't cause clicks or pops.
-- The visual beat uses a `{step, dropped, time}` queue, drained by `requestAnimationFrame` against `currentTime - outputLatency`, so the highlight matches what's audible.
+- The visual beat uses a `{step, dropped, count, time}` queue, drained by `requestAnimationFrame` against `currentTime - outputLatency`, so the LEDs match what's audible.
+
+## Visual design (vintage hardware)
+
+The app looks like a piece of 70s/80s studio gear: a beige device with walnut end-cheeks, split into **Tempo**, **Steps** and **Output** modules, with a full-width amber **Start** key at the bottom. It was built on the `styling` branch.
+
+- **Colours:** defined once as CSS variables in `src/index.css` (`--nome-*`, with dark overrides under `.dark`) and exposed to Tailwind via `@theme inline` as `page`, `body`, `panel`, `ink`, `ink-muted`, `rule`, `key`, `key-edge`, `amber`, `amber-deep`, `led-off`, `wood`, `wood-dark`, `lcd`, `lcd-on`, `pad-mute`. Use these names (`bg-panel`, `text-ink-muted`, ...); don't use raw Tailwind palette colours (zinc, indigo, ...).
+- **Fonts:** Barlow Condensed (latin 500/600/700 from `@fontsource`) is the UI font. DSEG7 Classic Bold (`font-lcd`) is used for LCD digits; it's vendored in `src/assets/fonts/dseg7/` with its OFL licence.
+- **Shared pieces:**
+  - `src/components/ui.ts`: `KEY_BASE` (shape and press behaviour, no colours or alignment), `KEY_FACE` (standard colours), `KEY` (base + face + centred), `KEY_SM`, `KEY_LATCHED` and `SILKSCREEN` (small printed labels). When a key needs different colours or alignment, combine `KEY_BASE` with its own classes rather than overriding `KEY`, because conflicting Tailwind utilities don't reliably override each other.
+  - `Led` (on / off / hollow) and `Module` (panel with printed label, rule and optional header controls).
+  - `.fader` (hardware slider styling), `.wood` and `.lcd-glow` in `index.css`.
+- **LCDs:** the tempo display shows faint unlit `888` segments behind the editable digits, a `BeatLight` bottom-left and "BPM" bottom-right. The step count is a small LCD too.
+- **Beat feedback:**
+  - The LED above the current pad lights, and the pad sinks (`motion-safe:` only, so it's skipped with reduced motion).
+  - `BeatLight` flashes once per beat: brighter on accents, a hollow ring on dropped beats, and nothing on muted steps. It restarts by remounting on the engine's `ActiveBeat.count`, which increases every beat, so repeats of the same step still flash.
+- **Pads:** accent pads are amber with ▲, normal pads are plain keys, and muted pads are flat and dark with "MUTE". Each pad shows its step number.
 
 ## Conventions
 
@@ -91,7 +107,7 @@ The engine uses the lookahead scheduler from Chris Wilson's article "A Tale of T
 - Keep pure logic in `src/logic/` with a `*.test.ts` next to it. Add tests when changing tempo, steps or tap-tempo behaviour.
 - Validate any value read from `localStorage` with an `isX(value): value is X` guard, and fall back to the default if it fails.
 - Dark mode uses the class-based variant (`@custom-variant dark` in `src/index.css`). An inline script in `index.html` applies the saved theme before the first paint, so keep its key and logic in sync with `useTheme.ts`.
-- Accessibility: every control needs a label and must work from the keyboard. Step buttons describe their state in `aria-label`.
+- Accessibility: every control needs a label and must work from the keyboard. Step pads describe their state in `aria-label`; decorative LEDs and markers are `aria-hidden`.
 
 ## Known gotchas
 

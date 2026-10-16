@@ -149,3 +149,16 @@ body {
 .lcd-glow {
   text-shadow: 0 0 6px rgb(255 176 0 / 0.55);
 }
+
+/* One beat flash on the LCD's beat light (restarted per beat by remounting). */
+@keyframes beat-flash {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.beat-flash {
+  animation: beat-flash 260ms ease-out forwards;
+}

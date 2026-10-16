@@ -1,0 +1,29 @@
+import type { ActiveBeat } from '../audio/MetronomeEngine'
+import type { StepState } from '../logic/steps'
+
+interface Props {
+  beat: ActiveBeat
+  steps: StepState[]
+}
+
+/**
+ * Flashes once per beat: bright on accents, normal on plain steps, a hollow ring when Drops
+ * silenced the beat, and nothing on muted steps. Remounting on `beat.count` restarts the fade.
+ */
+export function BeatLight({ beat, steps }: Props) {
+  const state = steps[beat.step]
+  const flash =
+    beat.step < 0 || state === 'mute'
+      ? null
+      : beat.dropped
+        ? 'border-2 border-lcd-on'
+        : state === 'accent'
+          ? 'bg-lcd-on shadow-[0_0_10px_4px_rgb(255_176_0/0.8)]'
+          : 'bg-lcd-on/80 shadow-[0_0_6px_2px_rgb(255_176_0/0.55)]'
+
+  return (
+    <span aria-hidden className="relative inline-block size-2.5 rounded-full bg-lcd-on/10">
+      {flash && <span key={beat.count} className={`beat-flash absolute inset-0 rounded-full ${flash}`} />}
+    </span>
+  )
+}

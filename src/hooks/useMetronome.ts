@@ -5,7 +5,7 @@ import { MetronomeEngine, type ActiveBeat, type EngineSettings } from '../audio/
 export function useMetronome({ bpm, steps, volume, drops, kit }: EngineSettings) {
   const [engine] = useState(() => new MetronomeEngine({ bpm, steps, volume, drops, kit }))
   const [isPlaying, setIsPlaying] = useState(false)
-  const [activeBeat, setActiveBeat] = useState<ActiveBeat>({ step: -1, dropped: false })
+  const [activeBeat, setActiveBeat] = useState<ActiveBeat>({ step: -1, dropped: false, count: 0 })
 
   useEffect(() => engine.subscribe(setActiveBeat), [engine])
   useEffect(() => () => engine.stop(), [engine])
@@ -22,5 +22,5 @@ export function useMetronome({ bpm, steps, volume, drops, kit }: EngineSettings)
     setIsPlaying(engine.isRunning)
   }, [engine])
 
-  return { isPlaying, activeStep: activeBeat.step, activeDropped: activeBeat.dropped, toggle }
+  return { isPlaying, activeBeat, activeStep: activeBeat.step, activeDropped: activeBeat.dropped, toggle }
 }

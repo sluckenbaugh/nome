@@ -1,3 +1,4 @@
+import { BeatLight } from './components/BeatLight'
 import { DropsControl } from './components/DropsControl'
 import { Module } from './components/Module'
 import { SoundSelect } from './components/SoundSelect'
@@ -29,7 +30,7 @@ export default function App() {
   const [kitId, setKitId] = usePersistentState('nome:kit', SYNTH_KIT_ID, isKitId)
   const kit = getKit(kitId)
   const { isDark, toggleTheme } = useTheme()
-  const { isPlaying, activeStep, activeDropped, toggle } = useMetronome({ bpm, steps, volume, drops, kit })
+  const { isPlaying, activeBeat, activeStep, activeDropped, toggle } = useMetronome({ bpm, steps, volume, drops, kit })
   const { tap, flash } = useTapTempo(setBpm)
   useKeyboardShortcuts({ onSpace: toggle, onEnter: tap })
 
@@ -48,7 +49,12 @@ export default function App() {
 
           <main className="flex flex-col gap-3">
             <Module label="Tempo">
-              <TempoControl bpm={bpm} onChange={setBpm} tapKey={<TapTempoButton flash={flash} onTap={tap} />} />
+              <TempoControl
+                bpm={bpm}
+                onChange={setBpm}
+                tapKey={<TapTempoButton flash={flash} onTap={tap} />}
+                beatLight={<BeatLight beat={activeBeat} steps={steps} />}
+              />
             </Module>
 
             <Module label="Steps" aside={<StepCount steps={steps} onChange={setSteps} />}>

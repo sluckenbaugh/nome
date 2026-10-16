@@ -9,9 +9,11 @@ interface Props {
   onChange: (bpm: number) => void
   /** Rendered beside the tempo keys (the Tap key). */
   tapKey: ReactNode
+  /** Rendered in the LCD's bottom-left corner (the beat light). */
+  beatLight: ReactNode
 }
 
-export function TempoControl({ bpm, onChange, tapKey }: Props) {
+export function TempoControl({ bpm, onChange, tapKey, beatLight }: Props) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-stretch gap-3">
@@ -30,7 +32,10 @@ export function TempoControl({ bpm, onChange, tapKey }: Props) {
               aria-label="Tempo in beats per minute"
             />
           </span>
-          <span className="mt-1 text-right text-[10px] font-bold tracking-[0.2em] text-lcd-on/60">BPM</span>
+          <span className="mt-1 flex items-center justify-between">
+            {beatLight}
+            <span className="text-[10px] font-bold tracking-[0.2em] text-lcd-on/60">BPM</span>
+          </span>
         </label>
 
         <div className="grid grid-cols-[repeat(2,2.5rem)_3.25rem] grid-rows-2 gap-2">
