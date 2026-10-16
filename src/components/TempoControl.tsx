@@ -1,37 +1,53 @@
+import type { ReactNode } from 'react'
 import { CommitNumberInput } from './CommitNumberInput'
 import { SliderRow } from './SliderRow'
+import { KEY_SM } from './ui'
 import { clampBpm, doubleBpm, halveBpm, MAX_BPM, MIN_BPM } from '../logic/tempo'
 
 interface Props {
   bpm: number
   onChange: (bpm: number) => void
+  /** Rendered beside the tempo keys (the Tap key). */
+  tapKey: ReactNode
 }
 
-const smallButton =
-  'h-10 min-w-10 rounded-full px-3 text-sm font-semibold bg-zinc-200 text-zinc-800 hover:bg-zinc-300 ' +
-  'dark:bg-zinc-800 dark:text-zinc-100 dark:hover:bg-zinc-700 disabled:opacity-40 disabled:pointer-events-none'
-
-export function TempoControl({ bpm, onChange }: Props) {
+export function TempoControl({ bpm, onChange, tapKey }: Props) {
   return (
-    <section aria-label="Tempo" className="flex w-full flex-col items-center gap-4">
-      <div className="flex items-center gap-4">
-        <button type="button" className={smallButton} onClick={() => onChange(clampBpm(bpm - 1))} disabled={bpm <= MIN_BPM} aria-label="Decrease tempo">
-          −
-        </button>
-        <label className="flex flex-col items-center">
-          <CommitNumberInput
-            min={MIN_BPM}
-            max={MAX_BPM}
-            value={bpm}
-            onCommit={(value) => onChange(clampBpm(value))}
-            className="w-40 bg-transparent text-center text-7xl font-bold tabular-nums tracking-tight outline-none [appearance:textfield] focus:text-indigo-600 dark:focus:text-indigo-400 [&::-webkit-inner-spin-button]:appearance-none"
-            aria-label="Tempo in beats per minute"
-          />
-          <span className="text-sm font-medium uppercase tracking-widest text-zinc-500">BPM</span>
+    <div className="flex flex-col gap-3">
+      <div className="flex items-stretch gap-3">
+        {/* Recessed LCD: faint unlit "888" segments sit behind the editable lit digits. */}
+        <label className="relative flex flex-1 flex-col justify-center rounded-[4px] bg-lcd px-3 py-2 shadow-[inset_0_2px_6px_rgb(0_0_0/0.7)]">
+          <span className="relative ml-auto font-lcd text-[2.6rem] leading-none">
+            <span aria-hidden className="text-lcd-on/10">
+              888
+            </span>
+            <CommitNumberInput
+              min={MIN_BPM}
+              max={MAX_BPM}
+              value={bpm}
+              onCommit={(value) => onChange(clampBpm(value))}
+              className="lcd-glow absolute inset-0 w-full bg-transparent text-right font-lcd text-lcd-on caret-lcd-on outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+              aria-label="Tempo in beats per minute"
+            />
+          </span>
+          <span className="mt-1 text-right text-[10px] font-bold tracking-[0.2em] text-lcd-on/60">BPM</span>
         </label>
-        <button type="button" className={smallButton} onClick={() => onChange(clampBpm(bpm + 1))} disabled={bpm >= MAX_BPM} aria-label="Increase tempo">
-          +
-        </button>
+
+        <div className="grid grid-cols-[repeat(2,2.5rem)_3.25rem] grid-rows-2 gap-2">
+          <button type="button" className={KEY_SM} onClick={() => onChange(clampBpm(bpm - 1))} disabled={bpm <= MIN_BPM} aria-label="Decrease tempo">
+            −
+          </button>
+          <button type="button" className={KEY_SM} onClick={() => onChange(clampBpm(bpm + 1))} disabled={bpm >= MAX_BPM} aria-label="Increase tempo">
+            +
+          </button>
+          <div className="row-span-2 flex">{tapKey}</div>
+          <button type="button" className={KEY_SM} onClick={() => onChange(halveBpm(bpm))} disabled={bpm <= MIN_BPM} aria-label="Halve tempo">
+            /2
+          </button>
+          <button type="button" className={KEY_SM} onClick={() => onChange(doubleBpm(bpm))} disabled={bpm >= MAX_BPM} aria-label="Double tempo">
+            ×2
+          </button>
+        </div>
       </div>
 
       <SliderRow
@@ -43,15 +59,6 @@ export function TempoControl({ bpm, onChange }: Props) {
         ariaLabel="Tempo slider"
         ariaValueText={`${bpm} BPM`}
       />
-
-      <div className="flex gap-2">
-        <button type="button" className={smallButton} onClick={() => onChange(halveBpm(bpm))} disabled={bpm <= MIN_BPM} aria-label="Halve tempo">
-          /2
-        </button>
-        <button type="button" className={smallButton} onClick={() => onChange(doubleBpm(bpm))} disabled={bpm >= MAX_BPM} aria-label="Double tempo">
-          ×2
-        </button>
-      </div>
-    </section>
+    </div>
   )
 }

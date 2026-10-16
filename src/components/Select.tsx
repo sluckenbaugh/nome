@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
+import { KEY_BASE, KEY_FACE } from './ui'
 
 export interface SelectOption {
   value: string
@@ -165,9 +166,7 @@ export function Select({ options, value, onChange, labelledBy }: Props) {
           focusedByPointer.current = false
           setOpen(false)
         }}
-        className={`flex h-9 cursor-pointer select-none items-center justify-between rounded-full px-4 text-sm font-semibold text-zinc-800 transition-colors outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-zinc-100 ${
-          open ? 'bg-zinc-300 dark:bg-zinc-700' : 'bg-zinc-200 hover:bg-zinc-300 dark:bg-zinc-800 dark:hover:bg-zinc-700'
-        }`}
+        className={`${KEY_BASE} ${KEY_FACE} h-9 w-full cursor-pointer justify-between px-3 text-sm`}
       >
         <span className="truncate">{selected?.label}</span>
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden className={`size-4 shrink-0 opacity-60 transition-transform ${open ? 'rotate-180' : ''}`}>
@@ -183,7 +182,7 @@ export function Select({ options, value, onChange, labelledBy }: Props) {
           aria-labelledby={labelledBy}
           // Keep focus on the trigger while clicking options.
           onMouseDown={(e) => e.preventDefault()}
-          className={`absolute inset-x-0 z-20 max-h-64 overflow-auto rounded-2xl bg-white p-1 shadow-lg ring-1 ring-zinc-200 dark:bg-zinc-900 dark:ring-zinc-700 ${
+          className={`absolute inset-x-0 z-20 max-h-64 overflow-auto rounded-md border border-rule bg-panel p-1 shadow-[0_8px_20px_rgb(0_0_0/0.3)] ${
             openUp ? 'bottom-full mb-2' : 'top-full mt-2'
           }`}
         >
@@ -197,9 +196,9 @@ export function Select({ options, value, onChange, labelledBy }: Props) {
                 aria-selected={isSelected}
                 onClick={() => choose(i)}
                 onMouseMove={() => setActive(i)}
-                className={`flex cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-sm ${
-                  i === active ? 'bg-zinc-100 dark:bg-zinc-800' : ''
-                } ${isSelected ? 'font-semibold text-indigo-600 dark:text-indigo-400' : 'text-zinc-800 dark:text-zinc-100'}`}
+                className={`flex cursor-pointer items-center justify-between rounded-[3px] px-3 py-2 text-sm font-semibold uppercase tracking-wider ${
+                  i === active ? 'bg-key' : ''
+                } ${isSelected ? 'text-amber-deep dark:text-amber' : 'text-ink'}`}
               >
                 {option.label}
                 {isSelected && (

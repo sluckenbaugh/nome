@@ -1,3 +1,6 @@
+import { Led } from './Led'
+import { KEY } from './ui'
+
 interface Props {
   flash: boolean
   onTap: (timeMs: number) => void
@@ -12,13 +15,12 @@ export function TapTempoButton({ flash, onTap }: Props) {
       // detail === 0 means keyboard activation (button focused via Tab); pointer taps are handled above.
       onClick={(e) => e.detail === 0 && onTap(e.timeStamp)}
       aria-keyshortcuts="Enter"
-      className={`h-14 w-full rounded-full border-2 text-lg font-bold transition-colors ${
-        flash
-          ? 'border-amber-400 bg-amber-400 text-zinc-900'
-          : 'border-zinc-300 text-zinc-700 hover:border-zinc-400 dark:border-zinc-700 dark:text-zinc-200 dark:hover:border-zinc-500'
-      }`}
+      aria-label="Tap tempo"
+      className={`${KEY} w-full flex-col gap-1 text-sm`}
     >
-      Tap <span className="text-xs font-medium opacity-60">(Return)</span>
+      <Led on={flash} className="size-2" />
+      Tap
+      <span className="text-[9px] tracking-widest text-ink-muted">↵</span>
     </button>
   )
 }

@@ -1,10 +1,13 @@
 import { DropsControl } from './components/DropsControl'
+import { Module } from './components/Module'
 import { SoundSelect } from './components/SoundSelect'
 import { StartStopButton } from './components/StartStopButton'
+import { StepCount } from './components/StepCount'
 import { StepGrid } from './components/StepGrid'
 import { TapTempoButton } from './components/TapTempoButton'
 import { TempoControl } from './components/TempoControl'
 import { ThemeToggle } from './components/ThemeToggle'
+import { SILKSCREEN } from './components/ui'
 import { VolumeFader } from './components/VolumeFader'
 import { getKit, isKitId, SOUND_KITS } from './audio/soundKits'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
@@ -31,31 +34,44 @@ export default function App() {
   useKeyboardShortcuts({ onSpace: toggle, onEnter: tap })
 
   return (
-    <div className="min-h-dvh bg-page font-sans text-ink">
-      <header className="mx-auto flex max-w-md items-center justify-between px-4 pt-4">
-        <h1 className="text-2xl font-bold tracking-tight">.nome</h1>
-        <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
-      </header>
+    <div className="min-h-dvh bg-page px-3 py-6 font-sans text-ink sm:py-10">
+      <div className="mx-auto flex max-w-md items-stretch drop-shadow-[0_10px_18px_rgb(0_0_0/0.25)]">
+        <div aria-hidden className="wood w-3 shrink-0 rounded-l-md sm:w-5" />
+        <div className="min-w-0 flex-1 border-y border-black/15 bg-body px-3 pt-3 pb-4 sm:px-4">
+          <header className="mb-3 flex items-center justify-between px-1">
+            <div className="flex items-baseline gap-3">
+              <h1 className="text-2xl font-bold tracking-tight">.nome</h1>
+              <span className={SILKSCREEN}>Metronome</span>
+            </div>
+            <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
+          </header>
 
-      <main className="mx-auto mt-6 flex max-w-md flex-col items-center gap-8 rounded-3xl bg-white px-6 py-8 shadow-sm dark:bg-zinc-900 max-sm:mx-4">
-        <TempoControl bpm={bpm} onChange={setBpm} />
-        <div className="flex w-full flex-col items-center gap-4">
-          <StepGrid steps={steps} activeStep={activeStep} activeDropped={activeDropped} onChange={setSteps} />
-          <DropsControl drops={drops} onChange={setDrops} />
-        </div>
-        <div className="grid w-full grid-cols-2 gap-3">
-          <StartStopButton isPlaying={isPlaying} onToggle={toggle} />
-          <TapTempoButton flash={flash} onTap={tap} />
-        </div>
-        <div className="flex w-full flex-col gap-4">
-          <SoundSelect kits={SOUND_KITS} value={kitId} onChange={setKitId} />
-          <VolumeFader volume={volume} onChange={setVolume} />
-        </div>
-      </main>
+          <main className="flex flex-col gap-3">
+            <Module label="Tempo">
+              <TempoControl bpm={bpm} onChange={setBpm} tapKey={<TapTempoButton flash={flash} onTap={tap} />} />
+            </Module>
 
-      <footer className="px-4 py-6 text-center text-xs text-zinc-500">
-        Free, no sign-up. On iPhone, turn off silent mode to hear clicks.
-      </footer>
+            <Module label="Steps" aside={<StepCount steps={steps} onChange={setSteps} />}>
+              <div className="flex flex-col gap-4">
+                <StepGrid steps={steps} activeStep={activeStep} activeDropped={activeDropped} onChange={setSteps} />
+                <DropsControl drops={drops} onChange={setDrops} />
+              </div>
+            </Module>
+
+            <Module label="Output">
+              <div className="flex flex-col gap-3">
+                <SoundSelect kits={SOUND_KITS} value={kitId} onChange={setKitId} />
+                <VolumeFader volume={volume} onChange={setVolume} />
+              </div>
+            </Module>
+
+            <StartStopButton isPlaying={isPlaying} onToggle={toggle} />
+          </main>
+        </div>
+        <div aria-hidden className="wood w-3 shrink-0 rounded-r-md sm:w-5" />
+      </div>
+
+      <footer className="px-4 py-6 text-center text-xs text-ink-muted">Free, no sign-up. On iPhone, turn off silent mode to hear clicks.</footer>
     </div>
   )
 }
