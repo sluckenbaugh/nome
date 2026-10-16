@@ -50,7 +50,7 @@ export default function App() {
           },
         ]}
       />
-      <div className="mx-auto max-w-md px-3 pt-6 sm:pt-10 md:max-w-3xl">
+      <div className="mx-auto max-w-md px-3 pt-10 sm:pt-16 md:max-w-3xl">
         <Window>
           {/*
             Phones: one column (Tempo, Steps, Output, Start). Wide screens: Tempo over Output on the
