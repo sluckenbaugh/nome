@@ -12,12 +12,12 @@
  * so the whole look can be retuned here. Dark values swap in under `.dark`.
  */
 :root {
-  --nome-page: #c9bfa6;
-  --nome-page-dot: #bcb195;
+  /* Desktop behind the window: sky blue by day, night-sky navy in dark mode. */
+  --nome-page: #87ceeb;
+  --nome-page-dot: #7ac2e2;
   /* Window/menu outlines and the hard drop shadow. */
   --nome-line: #2b261d;
   --nome-shadow: #2b261d;
-  --nome-body: #d9cfb8;
   --nome-panel: #e8e0cc;
   --nome-ink: #2b261d;
   --nome-ink-muted: #6b6252;
@@ -29,11 +29,10 @@
 }
 
 .dark {
-  --nome-page: #14120e;
-  --nome-page-dot: #1d1a15;
+  --nome-page: #0e1a2b;
+  --nome-page-dot: #132238;
   --nome-line: #8c7f63;
   --nome-shadow: #000;
-  --nome-body: #26221b;
   --nome-panel: #332d24;
   --nome-ink: #e8dfcb;
   --nome-ink-muted: #a39880;
@@ -45,7 +44,6 @@
   --color-page: var(--nome-page);
   --color-line: var(--nome-line);
   --color-shadow: var(--nome-shadow);
-  --color-body: var(--nome-body);
   --color-panel: var(--nome-panel);
   --color-ink: var(--nome-ink);
   --color-ink-muted: var(--nome-ink-muted);

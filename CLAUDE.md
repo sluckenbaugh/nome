@@ -90,11 +90,11 @@ The engine uses the lookahead scheduler from Chris Wilson's article "A Tale of T
 The app looks like a classic Mac application in a warm beige palette with a green accent (`#5ebd3e`, the green from Apple's original rainbow logo; `accent-deep` `#2f7d24` for green text on light backgrounds), built on the `styling` branch. It started as a "vintage hardware" design and was reworked to feel like software rather than physical gear. The controls are flat: 1px outlines, no bevels, glows or drop shadows inside the window, and pressed or "on" states shown by inverting the colours.
 
 - **Page and chrome:**
-  - A dithered `.desktop` pattern fills the page.
+  - A dithered `.desktop` pattern fills the page: sky blue (`#87ceeb`) in light mode, night-sky navy (`#0e1a2b`) in dark mode. Text placed directly on it (the footer) uses `text-ink`; `ink-muted` is too faint on the blue.
   - A sticky classic menu bar (`MenuBar`) sits at the top: ".nome", then a **Sound** menu (kits, duplicating the Sound dropdown) and a **View** menu (Light / Dark / Match System).
   - The app sits in a `Window`: a pinstriped title bar with a decorative close box and the title "Metronome", a 1px outline and a hard offset shadow (`--color-shadow`), with square corners.
   - Sections are classic group boxes (`Module`): a thin outline with the title sitting in the top border.
-- **Colours:** defined once as CSS variables in `src/index.css` (`--nome-*`, with dark overrides under `.dark`) and exposed to Tailwind via `@theme inline` as `page`, `line`, `shadow`, `body`, `panel`, `ink`, `ink-muted`, `rule`, `key`, `accent`, `accent-deep`, `lcd` (near-black in both themes). Use these names (`bg-panel`, `border-line`, ...); don't use raw Tailwind palette colours (zinc, indigo, ...).
+- **Colours:** defined once as CSS variables in `src/index.css` (`--nome-*`, with dark overrides under `.dark`) and exposed to Tailwind via `@theme inline` as `page`, `line`, `shadow`, `panel`, `ink`, `ink-muted`, `rule`, `key`, `accent`, `accent-deep`, `lcd` (near-black in both themes). Use these names (`bg-panel`, `border-line`, ...); don't use raw Tailwind palette colours (zinc, indigo, ...).
 - **Fonts:**
   - IBM Plex Mono (latin 400/500/600/700) is the only typeface, set as Tailwind's `font-sans`, so every element uses it by default. Numbers use `tabular-nums` so they don't shift as values change. It's much wider than a condensed font, so check that labels in the 64px `SliderRow` label column and small keys (Drops, Tap, pads) still fit when changing their text.
   - All are bundled, with no Google Fonts requests.
