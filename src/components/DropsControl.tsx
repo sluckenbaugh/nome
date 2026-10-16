@@ -1,6 +1,7 @@
 import { DENSITY_STEP, type DropSettings } from '../logic/drops'
 import { Led } from './Led'
 import { SliderRow } from './SliderRow'
+import { KEY, KEY_LATCHED } from './ui'
 
 interface Props {
   drops: DropSettings
@@ -19,9 +20,10 @@ export function DropsControl({ drops, onChange }: Props) {
           onClick={() => onChange({ ...drops, enabled: !drops.enabled })}
           aria-pressed={drops.enabled}
           title="Randomly mute beats to practise keeping time"
-          className="flex items-center gap-1.5 rounded-sm uppercase outline-none hover:text-ink focus-visible:ring-2 focus-visible:ring-amber"
+          // Fits the 64px label column so the fader stays aligned with the others; latched while on.
+          className={`${KEY} h-8 w-full gap-1 px-1 text-[11px] ${drops.enabled ? KEY_LATCHED : ''}`}
         >
-          <Led on={drops.enabled} />
+          <Led on={drops.enabled} className="size-2" />
           Drops
         </button>
       }
