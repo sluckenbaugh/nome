@@ -15,8 +15,8 @@ export function StartStopButton({ isPlaying, onToggle }: Props) {
       onClick={onToggle}
       aria-pressed={isPlaying}
       aria-keyshortcuts="Space"
-      // Near-black with amber text while playing (in both themes), so the red LED stays visible.
-        className={`${KEY_BASE} h-14 w-full justify-center gap-3 border-line text-lg ${isPlaying ? 'bg-lcd text-amber' : 'bg-amber text-lcd'}`}
+      // Near-black with accent text while playing (in both themes), so the red LED stays visible.
+        className={`${KEY_BASE} h-14 w-full justify-center gap-3 border-line text-lg ${isPlaying ? 'bg-lcd text-accent' : 'bg-accent text-lcd'}`}
     >
         <Led on={isPlaying} tone="red" />
       {isPlaying ? 'Stop' : 'Start'}

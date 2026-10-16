@@ -23,8 +23,8 @@
   --nome-ink-muted: #6b6252;
   --nome-rule: #bfb398;
   --nome-key: #efe8d6;
-  --nome-amber: #f2a20c;
-  --nome-amber-deep: #c47f00;
+  --nome-accent: #5ebd3e;
+  --nome-accent-deep: #2f7d24;
   --nome-lcd: #1a1712;
 }
 
@@ -51,8 +51,8 @@
   --color-ink-muted: var(--nome-ink-muted);
   --color-rule: var(--nome-rule);
   --color-key: var(--nome-key);
-  --color-amber: var(--nome-amber);
-  --color-amber-deep: var(--nome-amber-deep);
+  --color-accent: var(--nome-accent);
+  --color-accent-deep: var(--nome-accent-deep);
   --color-lcd: var(--nome-lcd);
 
   /* IBM Plex Mono is the single typeface for all text. */
@@ -130,11 +130,11 @@ body {
   outline: none;
 }
 .fader:focus-visible::-webkit-slider-thumb {
-  outline: 2px solid var(--color-amber);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 .fader:focus-visible::-moz-range-thumb {
-  outline: 2px solid var(--color-amber);
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
 }
 

@@ -12,18 +12,18 @@ interface Props {
 
 const PAD_FACE: Record<StepState, string> = {
   normal: KEY_FACE,
-  accent: 'border-line bg-amber text-lcd',
+  accent: 'border-line bg-accent text-lcd',
   // Muted pads get the classic grey dither, like a disabled control.
   mute: 'dither border-ink-muted/60 bg-panel text-ink-muted',
 }
 
 /**
- * On its beat a pad flashes inverted. Accents go near-black with amber (in both themes, since `ink` is
- * light in dark mode) so they still read as accents.
+ * On its beat a pad flashes inverted. Accent pads go near-black with an accent-coloured ▲ (in both
+ * themes, since `ink` is light in dark mode) so they still read as accents.
  */
 const PAD_ON_BEAT: Record<StepState, string> = {
   normal: KEY_INVERTED,
-  accent: 'border-line bg-lcd text-amber',
+  accent: 'border-line bg-lcd text-accent',
   mute: PAD_FACE.mute,
 }
 

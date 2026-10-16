@@ -198,7 +198,7 @@ export function Select({ options, value, onChange, labelledBy }: Props) {
                 onMouseMove={() => setActive(i)}
                 // Highlighted option is inverted, like the menu bar's menus.
                 className={`flex cursor-pointer items-center justify-between px-3 py-1.5 text-sm font-semibold uppercase tracking-wider ${
-                  i === active ? 'bg-ink text-panel' : isSelected ? 'text-amber-deep dark:text-amber' : 'text-ink'
+                  i === active ? 'bg-ink text-panel' : isSelected ? 'text-accent-deep dark:text-accent' : 'text-ink'
                 }`}
               >
                 {option.label}

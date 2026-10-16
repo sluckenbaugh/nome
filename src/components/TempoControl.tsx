@@ -18,13 +18,13 @@ export function TempoControl({ bpm, onChange, tapKey, beatLight }: Props) {
     <div className="flex flex-col gap-3">
       <div className="flex items-stretch gap-3">
         {/* Classic text field: editable tempo in the pixel font, beat light and units underneath. */}
-        <label className="flex min-w-0 flex-1 flex-col justify-center rounded-[4px] border border-line bg-key px-3 py-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-amber">
+        <label className="flex min-w-0 flex-1 flex-col justify-center rounded-[4px] border border-line bg-key px-3 py-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent">
           <CommitNumberInput
             min={MIN_BPM}
             max={MAX_BPM}
             value={bpm}
             onCommit={(value) => onChange(clampBpm(value))}
-            className="w-full bg-transparent text-right text-5xl leading-none font-semibold tabular-nums text-ink caret-amber outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+            className="w-full bg-transparent text-right text-5xl leading-none font-semibold tabular-nums text-ink caret-accent outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
             aria-label="Tempo in beats per minute"
           />
           <span className="mt-1.5 flex items-center justify-between">

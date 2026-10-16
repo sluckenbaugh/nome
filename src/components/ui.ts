@@ -8,7 +8,7 @@
 export const KEY_BASE =
   'inline-flex select-none items-center rounded-[6px] border font-semibold uppercase tracking-wider transition-colors duration-75 ' +
   'active:border-line active:bg-ink active:text-panel ' +
-  'outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber disabled:pointer-events-none disabled:opacity-40'
+  'outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-40'
 
 /** Standard key colours. */
 export const KEY_FACE = 'border-line bg-key text-ink'
