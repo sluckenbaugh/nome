@@ -109,7 +109,7 @@ The app looks like a classic Mac application in a warm beige palette with a gree
 - **Beat feedback:**
   - The LED above the current pad lights, and the pad flashes inverted (accents go near-black with a green ▲). On a dropped beat the LED shows a hollow ring and the pad doesn't invert.
   - `BeatLight` (a flat outlined dot) flashes green once per beat: brighter on accents, a hollow ring on dropped beats, and nothing on muted steps. It restarts by remounting on the engine's `ActiveBeat.count`, which increases every beat, so repeats of the same step still flash.
-- **Pads:** accent pads are solid green with ▲, normal pads are plain keys, and muted pads use the grey `.dither` with "MUTE". Each pad shows its step number.
+- **Pads:** accent pads are solid green with ▲, normal pads are plain keys, and muted pads use the grey `.dither` with no label (the pattern alone marks them). Each pad shows its step number.
 - **Menus and keys:** `MenuBar` handles its own keys and stops Space/Enter inside an open menu from reaching the global shortcuts, like `Select`. Focus moves into the menu on open and returns to the menu title on Esc or after choosing.
 
 ## Conventions

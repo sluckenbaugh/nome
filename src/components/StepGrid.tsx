@@ -45,7 +45,6 @@ export function StepGrid({ steps, activeStep, activeDropped, onChange }: Props) 
                 className={`${KEY_BASE} ${isActive && !activeDropped ? PAD_ON_BEAT[state] : PAD_FACE[state]} relative size-14 justify-center text-[10px]`}
               >
                 {state === 'accent' && <span aria-hidden className="text-base leading-none">▲</span>}
-                {state === 'mute' && <span aria-hidden className="tracking-[0.15em]">Mute</span>}
                 <span aria-hidden className="absolute bottom-0.5 left-1.5 text-[9px] opacity-50">
                   {i + 1}
                 </span>
