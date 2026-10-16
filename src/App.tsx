@@ -39,12 +39,12 @@ export default function App() {
       <MenuBar
         appName=".nome"
         menus={[
-          { label: 'Sound', items: SOUND_KITS.map((k) => ({ label: k.label, checked: k.id === kitId, onSelect: () => setKitId(k.id) })) },
+          { label: 'Sounds', items: SOUND_KITS.map((k) => ({ label: k.label, checked: k.id === kitId, onSelect: () => setKitId(k.id) })) },
           {
-            label: 'View',
+            label: 'Mode',
             items: [
-              { label: 'Light', checked: theme === 'light', onSelect: () => setTheme('light') },
-              { label: 'Dark', checked: theme === 'dark', onSelect: () => setTheme('dark') },
+              { label: 'Morning Dove', checked: theme === 'light', onSelect: () => setTheme('light') },
+              { label: 'Night Owl', checked: theme === 'dark', onSelect: () => setTheme('dark') },
               { label: 'Match System', checked: theme === 'system', onSelect: () => setTheme('system') },
             ],
           },
