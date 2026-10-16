@@ -38,6 +38,8 @@
   --nome-ink-muted: #a39880;
   --nome-rule: #4a4235;
   --nome-key: #463e32;
+  /* Coral: a warm "sunset" accent against the twilight indigo desktop. */
+  --nome-accent: #ff8a65;
 }
 
 @theme inline {
