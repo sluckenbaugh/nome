@@ -1,5 +1,7 @@
-import { playClick } from './clicks'
+import { playClick, playSample } from './clicks'
+import { loadKit, type KitSamples } from './samples'
 import { DEFAULT_DROPS, isDropped, type DropSettings } from '../logic/drops'
+import { isSampleKit, SYNTH_KIT, type SoundKit } from '../logic/soundKits'
 import { DEFAULT_STEPS, type StepState } from '../logic/steps'
 import { clampBpm, DEFAULT_BPM } from '../logic/tempo'
 import { DEFAULT_VOLUME, faderToGain } from '../logic/volume'
@@ -32,6 +34,7 @@ export interface EngineSettings {
   steps: StepState[]
   volume: number
   drops: DropSettings
+  kit: SoundKit
 }
 
 /**
@@ -51,6 +54,9 @@ export class MetronomeEngine {
   private steps: StepState[]
   private volume: number
   private drops: DropSettings
+  private kit: SoundKit = SYNTH_KIT
+  /** Decoded samples for `kit`; null while loading (or for the synth kit), which falls back to synth clicks. */
+  private samples: KitSamples | null = null
 
   private running = false
   private nextStep = 0
@@ -64,6 +70,7 @@ export class MetronomeEngine {
     this.steps = settings.steps ?? DEFAULT_STEPS
     this.volume = settings.volume ?? DEFAULT_VOLUME
     this.drops = settings.drops ?? DEFAULT_DROPS
+    this.setKit(settings.kit ?? SYNTH_KIT)
   }
 
   get isRunning(): boolean {
@@ -91,6 +98,20 @@ export class MetronomeEngine {
   /** Takes effect from the next unscheduled beat (within ~100ms). */
   setDrops(drops: DropSettings): void {
     this.drops = drops
+  }
+
+  /** Switches click sounds from the next unscheduled beat. Sample kits load in the background. */
+  setKit(kit: SoundKit): void {
+    if (kit.id === this.kit.id && (this.samples || !isSampleKit(kit))) return
+    this.kit = kit
+    this.samples = null
+    if (!isSampleKit(kit)) return
+    loadKit(kit).then(
+      (samples) => {
+        if (this.kit.id === kit.id) this.samples = samples
+      },
+      (error: unknown) => console.warn(`Couldn't load sound "${kit.label}", using Classic clicks instead.`, error),
+    )
   }
 
   /** Subscribe to the beat that is currently being heard. Returns an unsubscribe function. */
@@ -170,7 +191,10 @@ export class MetronomeEngine {
       const state = this.steps[step] ?? 'normal'
       // Rolled per beat at schedule time, so each pass through the bar gets fresh random drops.
       const dropped = state !== 'mute' && this.drops.enabled && isDropped(this.drops.density)
-      if (state !== 'mute' && !dropped) playClick(ctx, this.nextBeatTime, state, this.bus)
+      if (state !== 'mute' && !dropped) {
+        if (this.samples) playSample(ctx, this.nextBeatTime, state === 'accent' ? this.samples.accent : this.samples.main, this.bus)
+        else playClick(ctx, this.nextBeatTime, state, this.bus)
+      }
       this.queue.push({ step, dropped, time: this.nextBeatTime })
 
       this.nextBeatTime += 60 / this.bpm

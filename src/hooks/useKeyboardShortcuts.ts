@@ -14,7 +14,7 @@ function isTypingTarget(target: EventTarget | null): boolean {
 }
 
 /**
- * Space/Enter shortcuts are skipped while typing, and when a button was reached by keyboard (Tab)
+ * Space/Enter shortcuts are skipped while typing, and when a button or select was reached by keyboard (Tab)
  * so keyboard users can still activate the focused control. A button focused by a mouse/touch press
  * doesn't count, so clicking Start and then pressing Space stops it.
  *
@@ -24,7 +24,8 @@ function isTypingTarget(target: EventTarget | null): boolean {
 function shouldHandle(e: KeyboardEvent, keyboardNav: boolean): boolean {
   if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return false
   if (isTypingTarget(e.target)) return false
-  return !(keyboardNav && e.target instanceof HTMLButtonElement)
+  // Buttons and the custom Select (role=combobox) use Space/Enter themselves when reached by keyboard.
+  return !(keyboardNav && e.target instanceof HTMLElement && e.target.matches('button, [role="combobox"]'))
 }
 
 /** Global keys: Space → start/stop, Enter → tap tempo. */

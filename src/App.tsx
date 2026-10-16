@@ -1,16 +1,19 @@
 import { DropsControl } from './components/DropsControl'
+import { SoundSelect } from './components/SoundSelect'
 import { StartStopButton } from './components/StartStopButton'
 import { StepGrid } from './components/StepGrid'
 import { TapTempoButton } from './components/TapTempoButton'
 import { TempoControl } from './components/TempoControl'
 import { ThemeToggle } from './components/ThemeToggle'
 import { VolumeFader } from './components/VolumeFader'
+import { getKit, isKitId, SOUND_KITS } from './audio/soundKits'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { useMetronome } from './hooks/useMetronome'
 import { usePersistentState } from './hooks/usePersistentState'
 import { useTapTempo } from './hooks/useTapTempo'
 import { useTheme } from './hooks/useTheme'
 import { DEFAULT_DROPS, isDropSettings } from './logic/drops'
+import { SYNTH_KIT_ID } from './logic/soundKits'
 import { DEFAULT_STEPS, isSteps } from './logic/steps'
 import { DEFAULT_BPM, isBpm } from './logic/tempo'
 import { DEFAULT_VOLUME, isVolume } from './logic/volume'
@@ -20,8 +23,10 @@ export default function App() {
   const [steps, setSteps] = usePersistentState('nome:steps', DEFAULT_STEPS, isSteps)
   const [volume, setVolume] = usePersistentState('nome:volume', DEFAULT_VOLUME, isVolume)
   const [drops, setDrops] = usePersistentState('nome:drops', DEFAULT_DROPS, isDropSettings)
+  const [kitId, setKitId] = usePersistentState('nome:kit', SYNTH_KIT_ID, isKitId)
+  const kit = getKit(kitId)
   const { isDark, toggleTheme } = useTheme()
-  const { isPlaying, activeStep, activeDropped, toggle } = useMetronome({ bpm, steps, volume, drops })
+  const { isPlaying, activeStep, activeDropped, toggle } = useMetronome({ bpm, steps, volume, drops, kit })
   const { tap, flash } = useTapTempo(setBpm)
   useKeyboardShortcuts({ onSpace: toggle, onEnter: tap })
 
@@ -42,7 +47,10 @@ export default function App() {
           <StartStopButton isPlaying={isPlaying} onToggle={toggle} />
           <TapTempoButton flash={flash} onTap={tap} />
         </div>
-        <VolumeFader volume={volume} onChange={setVolume} />
+        <div className="flex w-full flex-col gap-4">
+          <SoundSelect kits={SOUND_KITS} value={kitId} onChange={setKitId} />
+          <VolumeFader volume={volume} onChange={setVolume} />
+        </div>
       </main>
 
       <footer className="px-4 py-6 text-center text-xs text-zinc-500">

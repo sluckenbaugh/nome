@@ -1,3 +1,5 @@
+import type { Sample } from './samples'
+
 export type ClickKind = 'normal' | 'accent'
 
 const CLICK_SOUND: Record<ClickKind, { frequency: number; peak: number }> = {
@@ -10,7 +12,7 @@ const DECAY_S = 0.04
 
 /**
  * Schedules one synthesized click at `time` (AudioContext seconds).
- * Kept separate from the engine so it can later be swapped for sample playback.
+ * Used by the Classic kit, and as a fallback while a sample kit is still loading.
  */
 export function playClick(ctx: BaseAudioContext, time: number, kind: ClickKind, destination: AudioNode): void {
   const { frequency, peak } = CLICK_SOUND[kind]
@@ -30,4 +32,13 @@ export function playClick(ctx: BaseAudioContext, time: number, kind: ClickKind, 
     osc.disconnect()
     envelope.disconnect()
   }
+}
+
+/** Schedules a decoded sample at `time`, skipping its leading silence. */
+export function playSample(ctx: BaseAudioContext, time: number, sample: Sample, destination: AudioNode): void {
+  const source = ctx.createBufferSource()
+  source.buffer = sample.buffer
+  source.connect(destination)
+  source.start(time, sample.offset)
+  source.onended = () => source.disconnect()
 }

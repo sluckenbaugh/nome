@@ -35,8 +35,11 @@ Before saying work is finished, run `npx tsc -b`, `npm run lint`, `npm test` and
 - **Tempo range:** 20–300 BPM, whole numbers only (`src/logic/tempo.ts`). Halving and doubling clamp to this range.
 - **Steps:** each step is one beat in the bar. There are 1–16 steps, shown in a grid of four per row (step 5 starts a second row), and each is `'normal' | 'accent' | 'mute'`. Clicking a step cycles normal → accent → mute. The count can be changed with the −/+ buttons or typed into the Steps number input; `setStepCount` adds new steps as normal and removes steps from the end. The default is `['accent','normal','normal','normal']`. The step grid replaces the separate accent on/off control from the MVP spec.
 - **Drops:** a toggle button labelled just "Drops" (its state is shown by the filled colour and `aria-pressed`, with no on/off text), with a 0–100% density slider (5% steps), placed under the step grid. The button sits on its own line, aligned left, above the slider and percentage. When on, every beat that would sound is silenced with probability = density, rolled fresh each time (`isDropped` in `src/logic/drops.ts`). Accents can be dropped too, and steps the user has muted aren't counted as drops. The roll happens in the engine's `schedule()` when the beat is booked, never in React. While playing, the highlight still moves onto a dropped beat but shows a dashed outline instead of the amber ring. The slider can be adjusted while Drops is off.
-- **Sounds:** synthesized for now (sine tone with a fast decay: normal ≈1000 Hz, accent ≈1700 Hz and louder). Audio samples are a possible future feature.
-- **Saved settings:** stored in `localStorage` with the keys `nome:bpm`, `nome:steps`, `nome:volume`, `nome:drops` (`{enabled, density}`) and `nome:theme`.
+- **Sounds:** chosen from a "Sound" dropdown above Volume (`SoundSelect`, built on the custom `Select`). "Classic" is the built-in synthesized click and the default; every other option is a sample kit.
+  - **Adding a kit:** create `src/assets/sounds/<folder>/` containing `main.wav` (normal steps) and `accent.wav` (accented steps). `import.meta.glob` in `src/audio/soundKits.ts` picks it up automatically; no code change is needed. The label comes from the folder name (`old-school` → "Old School") and the id is the lowercase folder name. Folders missing either file are skipped.
+  - **Files:** WAV only (MP3, AAC and Opus add silence at the start, which makes clicks late). Mono, 48 kHz, 16-bit, accent peak around −1 dBFS, normal 3–6 dB quieter. Keep clicks under about 150ms so they don't overlap at 300 BPM.
+  - **Loading:** kits are decoded once with an `OfflineAudioContext` (`src/audio/samples.ts`), so no user gesture is needed and they load before Start. Leading silence below −60 dBFS is skipped automatically (`findOnset` → `source.start(time, offset)`). While a kit is loading, or if it fails to load, the engine plays Classic clicks instead.
+- **Saved settings:** stored in `localStorage` with the keys `nome:bpm`, `nome:steps`, `nome:volume`, `nome:drops` (`{enabled, density}`), `nome:kit` (kit id) and `nome:theme`.
 - **Theme:** follows the OS setting until the user toggles it. After that the choice is stored as `'light'|'dark'`.
 - **Keyboard:** **Space = Start/Stop** and **Enter/Return = tap tempo**, handled for the whole page in `useKeyboardShortcuts.ts`. The shortcuts are skipped while typing (so Enter in the BPM field confirms the value), and on a button reached with Tab (navigation mode is tracked: Tab sets keyboard mode, any pointerdown clears it), so Tab users can still press buttons with Space or Enter. A button focused by a mouse click doesn't block them; `preventDefault` stops that button from double-firing.
 
@@ -47,20 +50,23 @@ src/
   audio/
     MetronomeEngine.ts    # lookahead scheduler, master gain, per-run bus, visual beat queue
     scheduler.worker.ts   # Web Worker: setInterval → postMessage('tick')
-    clicks.ts             # playClick(ctx, time, kind, dest) — swap point for samples
+    clicks.ts             # playClick (synth) and playSample (decoded kit sample, with onset offset)
+    samples.ts            # loadKit: fetch + decode + onset detection, cached per kit
+    soundKits.ts          # SOUND_KITS from import.meta.glob of src/assets/sounds/*/{main,accent}.wav
   logic/                  # pure, framework-free, unit-tested
     tempo.ts              # clampBpm, halveBpm, doubleBpm, isBpm, MIN/MAX/DEFAULT_BPM
     steps.ts              # StepState, cycleStep, setStepCount, addStep, removeStep, isSteps (1–16)
     tapTempo.ts           # TapTempo class: average of last 6 taps, reset after 2s gap
     volume.ts             # faderToGain (squared curve), isVolume
     drops.ts              # DropSettings, isDropped(density, random), isDropSettings
+    soundKits.ts          # SoundKit types, kitsFromFiles, kitLabel, findOnset (pure, tested)
   hooks/
     useMetronome.ts       # owns one engine instance; syncs bpm/steps/volume; exposes isPlaying/activeStep/toggle
     usePersistentState.ts # useState + localStorage with a validator fallback
     useTheme.ts           # toggles the `dark` class on <html>
     useTapTempo.ts        # tap(timeMs) → BPM via TapTempo, plus flash state
     useKeyboardShortcuts.ts # global Space → start/stop, Enter → tap
-  components/             # presentational: TempoControl, StepGrid, DropsControl, SliderRow, CommitNumberInput, StartStopButton,
+  components/             # presentational: TempoControl, StepGrid, DropsControl, SoundSelect, Select, SliderRow, CommitNumberInput, StartStopButton,
                           # TapTempoButton, VolumeFader, ThemeToggle
   App.tsx                 # wires persistent state → hooks → components
 ```
@@ -91,6 +97,7 @@ The engine uses the lookahead scheduler from Chris Wilson's article "A Tale of T
 
 - **iOS:** the silent switch mutes Web Audio. The footer tells users about this.
 - **Sliders:** build every slider with `SliderRow` (label column `w-16`, the slider, value column `w-10`) so all slider tracks share the same left and right edges. The tempo slider has no label on purpose; its empty label column keeps it aligned.
+- **Dropdowns:** use the custom `Select` (`src/components/Select.tsx`), not a native `<select>`, whose open list can't be styled. It follows the WAI-ARIA select-only combobox pattern: focus stays on the trigger and `aria-activedescendant` tracks the highlighted option. When open it stops Space/Enter from reaching the global shortcuts. When it was reached with Tab it's skipped by `useKeyboardShortcuts` like a button.
 - **Number inputs:** use `CommitNumberInput` (used by the BPM and Steps fields). It keeps a draft string and commits only on blur or Enter, so values can be typed without being clamped mid-typing.
 - **Tap button timing:** the Tap button uses `onPointerDown` and the event's `timeStamp`, so tap times are accurate. Its `onClick` only taps when `e.detail === 0` (activated from the keyboard), so a mouse tap isn't counted twice.
 - **Don't use `:focus-visible` to detect keyboard focus** in key handlers. Chromium applies it to *any* focused element once a key is pressed, so a mouse-focused button already matches by the time the handler runs.
@@ -98,5 +105,5 @@ The engine uses the lookahead scheduler from Chris Wilson's article "A Tale of T
 
 ## Possible next steps
 
-- Audio sample sounds (replace or extend `src/audio/clicks.ts`, loading files into `AudioBuffer`s)
+- Rebalance kit levels (Library accent is very quiet; Kitchen and Old School accents peak lower than their main clicks). Library `main.wav` also has about 283ms of silence before the hit (skipped automatically) and is about 280ms long, so clicks overlap above about 215 BPM.
 - Subdivisions (not in scope yet)
