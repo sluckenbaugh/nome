@@ -24,8 +24,9 @@ function isTypingTarget(target: EventTarget | null): boolean {
 function shouldHandle(e: KeyboardEvent, keyboardNav: boolean): boolean {
   if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) return false
   if (isTypingTarget(e.target)) return false
-  // Buttons and the custom Select (role=combobox) use Space/Enter themselves when reached by keyboard.
-  return !(keyboardNav && e.target instanceof HTMLElement && e.target.matches('button, [role="combobox"]'))
+  // Buttons, links and the custom Select (role=combobox) use Space/Enter themselves when reached by
+  // keyboard (e.g. Return follows a Guide link instead of tapping tempo).
+  return !(keyboardNav && e.target instanceof HTMLElement && e.target.matches('button, a[href], [role="combobox"]'))
 }
 
 /** Global keys: Space → start/stop, Enter → tap tempo. */

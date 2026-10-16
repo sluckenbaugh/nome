@@ -1,43 +1,34 @@
-import { BeatLight } from './components/BeatLight'
-import { DropsControl } from './components/DropsControl'
+import { lazy, Suspense, useEffect } from 'react'
+import { Route, Routes, useLocation } from 'react-router'
+import { SOUND_KITS } from './audio/soundKits'
 import { MenuBar } from './components/MenuBar'
-import { Module } from './components/Module'
-import { SoundSelect } from './components/SoundSelect'
-import { StartStopButton } from './components/StartStopButton'
-import { StepCount } from './components/StepCount'
-import { StepGrid } from './components/StepGrid'
-import { TapTempoButton } from './components/TapTempoButton'
-import { TempoControl } from './components/TempoControl'
-import { VolumeFader } from './components/VolumeFader'
-import { Window } from './components/Window'
-import { getKit, isKitId, SOUND_KITS } from './audio/soundKits'
+import { PlayingIndicator } from './components/PlayingIndicator'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
-import { useMetronome } from './hooks/useMetronome'
-import { usePersistentState } from './hooks/usePersistentState'
-import { useTapTempo } from './hooks/useTapTempo'
 import { useTheme } from './hooks/useTheme'
-import { DEFAULT_DROPS, isDropSettings } from './logic/drops'
-import { SYNTH_KIT_ID } from './logic/soundKits'
-import { DEFAULT_STEPS, isSteps } from './logic/steps'
-import { DEFAULT_BPM, isBpm } from './logic/tempo'
-import { DEFAULT_VOLUME, isVolume } from './logic/volume'
+import { MetronomePage } from './pages/MetronomePage'
+import { NotFoundPage } from './pages/NotFoundPage'
+import { useMetronomeContext } from './state/metronomeContext'
 
+// The Guide is loaded on demand so the metronome page doesn't download it.
+const GuidePage = lazy(() => import('./pages/GuidePage').then((m) => ({ default: m.GuidePage })))
+
+/** Page frame shared by every route: desktop, menu bar, the current page, and the footer. */
 export default function App() {
-  const [bpm, setBpm] = usePersistentState('nome:bpm', DEFAULT_BPM, isBpm)
-  const [steps, setSteps] = usePersistentState('nome:steps', DEFAULT_STEPS, isSteps)
-  const [volume, setVolume] = usePersistentState('nome:volume', DEFAULT_VOLUME, isVolume)
-  const [drops, setDrops] = usePersistentState('nome:drops', DEFAULT_DROPS, isDropSettings)
-  const [kitId, setKitId] = usePersistentState('nome:kit', SYNTH_KIT_ID, isKitId)
-  const kit = getKit(kitId)
+  const { kitId, setKitId, isPlaying, toggle, tap } = useMetronomeContext()
   const { preference: theme, setPreference: setTheme } = useTheme()
-  const { isPlaying, activeBeat, activeStep, activeDropped, toggle } = useMetronome({ bpm, steps, volume, drops, kit })
-  const { tap, flash } = useTapTempo(setBpm)
+  const { pathname } = useLocation()
+  // Space and Return work on every page; the metronome keeps playing across pages.
   useKeyboardShortcuts({ onSpace: toggle, onEnter: tap })
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
 
   return (
     <div className="desktop min-h-dvh font-sans text-ink">
       <MenuBar
         appName=".nome"
+        homeTo="/"
         menus={[
           { label: 'Sounds', items: SOUND_KITS.map((k) => ({ label: k.label, checked: k.id === kitId, onSelect: () => setKitId(k.id) })) },
           {
@@ -49,49 +40,17 @@ export default function App() {
             ],
           },
         ]}
+        links={[{ label: 'Guide', to: '/guide' }]}
+        aside={isPlaying && pathname !== '/' ? <PlayingIndicator onStop={toggle} /> : null}
       />
-      <div className="mx-auto max-w-md px-3 pt-10 sm:pt-16 md:max-w-3xl">
-        <Window>
-          {/*
-            Phones: one column (Tempo, Steps, Output, Start). Wide screens: Tempo over Output on the
-            left, Steps filling the right column, Start across the bottom. When Steps is taller, the
-            extra height goes to the Output row so Tempo keeps its natural size.
-          */}
-          <main className="flex flex-col gap-4 md:grid md:grid-cols-2 md:grid-rows-[auto_1fr_auto] md:gap-x-5">
-            <Module label="Tempo" className="md:col-start-1 md:row-start-1">
-              <TempoControl
-                bpm={bpm}
-                onChange={setBpm}
-                tapKey={<TapTempoButton flash={flash} onTap={tap} />}
-                beatLight={<BeatLight beat={activeBeat} steps={steps} />}
-              />
-            </Module>
 
-            <Module
-              label="Steps"
-              aside={<StepCount steps={steps} onChange={setSteps} />}
-              className="md:col-start-2 md:row-span-2 md:row-start-1"
-            >
-              {/* Pads at the top, Drops pinned to the bottom when the box is stretched. */}
-              <div className="flex flex-1 flex-col justify-between gap-4">
-                <StepGrid steps={steps} activeStep={activeStep} activeDropped={activeDropped} onChange={setSteps} />
-                <DropsControl drops={drops} onChange={setDrops} />
-              </div>
-            </Module>
-
-            <Module label="Output" className="md:col-start-1 md:row-start-2">
-              <div className="flex flex-col gap-3">
-                <SoundSelect kits={SOUND_KITS} value={kitId} onChange={setKitId} />
-                <VolumeFader volume={volume} onChange={setVolume} />
-              </div>
-            </Module>
-
-            <div className="md:col-span-2 md:row-start-3">
-              <StartStopButton isPlaying={isPlaying} onToggle={toggle} />
-            </div>
-          </main>
-        </Window>
-      </div>
+      <Suspense fallback={null}>
+        <Routes>
+          <Route path="/" element={<MetronomePage />} />
+          <Route path="/guide" element={<GuidePage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
 
       <footer className="px-4 py-8 text-center text-xs text-ink">Free, no sign-up, no pop-ups, just clicks. On mobile, turn off silent mode to hear audio.</footer>
     </div>

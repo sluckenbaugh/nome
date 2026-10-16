@@ -13,7 +13,7 @@ It's a frontend-only single-page app. Everything runs in the browser using built
 - React 19 + TypeScript (target/lib **ES2022**) + Vite 6
 - Tailwind CSS v4 via `@tailwindcss/vite`. There is no `tailwind.config`; the setup lives in `src/index.css`.
 - Vitest 3 for unit tests (node environment, configured in `vite.config.ts`)
-- No React Router: it's one page, so add it only if more pages appear.
+- React Router v7 (`react-router`) in declarative mode: `<BrowserRouter>` in `main.tsx`, `<Routes>` in `App.tsx`. Routes are `/` (metronome), `/guide` (lazy-loaded) and `*` (not found). `render.yaml` rewrites `/*` to `/index.html` so direct links and refreshes on `/guide` work on Render.
 - No audio library (not Tone.js): we use the Web Audio API directly, on purpose.
 - Deploys to Render as a static site (`render.yaml`: `npm ci && npm run build`, publishes `dist/`)
 
@@ -40,8 +40,9 @@ Before saying work is finished, run `npx tsc -b`, `npm run lint`, `npm test` and
   - **Files:** WAV only (MP3, AAC and Opus add silence at the start, which makes clicks late). Mono, 48 kHz, 16-bit, accent peak around −1 dBFS, normal 3–6 dB quieter. Keep clicks under about 150ms so they don't overlap at 300 BPM.
   - **Loading:** kits are decoded once with an `OfflineAudioContext` (`src/audio/samples.ts`), so no user gesture is needed and they load before Start. Leading silence below −60 dBFS is skipped automatically (`findOnset` → `source.start(time, offset)`). While a kit is loading, or if it fails to load, the engine plays Classic clicks instead.
 - **Saved settings:** stored in `localStorage` with the keys `nome:bpm`, `nome:steps`, `nome:volume`, `nome:drops` (`{enabled, density}`), `nome:kit` (kit id) and `nome:theme`.
-- **Theme:** chosen in the View menu: Light, Dark or Match System (the default, which follows the OS). Stored as `'light'|'dark'|'system'`.
-- **Keyboard:** **Space = Start/Stop** and **Enter/Return = tap tempo**, handled for the whole page in `useKeyboardShortcuts.ts`. The shortcuts are skipped while typing (so Enter in the BPM field confirms the value), and on a button reached with Tab (navigation mode is tracked: Tab sets keyboard mode, any pointerdown clears it), so Tab users can still press buttons with Space or Enter. A button focused by a mouse click doesn't block them; `preventDefault` stops that button from double-firing.
+- **Pages:** the metronome (`/`) and the Guide (`/guide`). The metronome keeps playing while you're on other pages, and Space/Return work on every page. `Page` sets the tab title ("<title> — Nome Metronome"; the metronome uses "Nome Metronome") and, after an in-app navigation (not on the initial load, detected with `useLocation().key === 'default'`), moves focus to the page's `<h1>`. The Guide's text lives in `src/content/guide.tsx` and is styled by `.guide-prose` in `index.css` (paragraphs, lists, `h3`, links, `<kbd>` as small keys); it currently holds placeholder sections for the user to replace.
+- **Theme:** chosen in the Mode menu: Morning Dove (light), Night Owl (dark) or Match System (the default, which follows the OS). Stored as `'light'|'dark'|'system'`.
+- **Keyboard:** **Space = Start/Stop** and **Enter/Return = tap tempo**, handled for the whole page in `useKeyboardShortcuts.ts`. The shortcuts are skipped while typing (so Enter in the BPM field confirms the value), and on a button, link (`a[href]`) or the custom Select reached with Tab (navigation mode is tracked: Tab sets keyboard mode, any pointerdown clears it), so Tab users can still press buttons with Space or Enter. A button focused by a mouse click doesn't block them; `preventDefault` stops that button from double-firing.
 
 ## Architecture
 
@@ -60,6 +61,15 @@ src/
     volume.ts             # faderToGain (squared curve), isVolume
     drops.ts              # DropSettings, isDropped(density, random), isDropSettings
     soundKits.ts          # SoundKit types, kitsFromFiles, kitLabel, findOnset (pure, tested)
+  state/
+    MetronomeProvider.tsx # saved settings + engine + tap tempo, above the routes (playback continues across pages)
+    metronomeContext.ts   # MetronomeContext and useMetronomeContext()
+  pages/
+    MetronomePage.tsx     # the metronome window (Tempo, Steps, Output, Start)
+    GuidePage.tsx         # Guide window: one Module per section of src/content/guide.tsx
+    NotFoundPage.tsx
+  content/
+    guide.tsx             # Guide text: GUIDE_SECTIONS [{ id, title, body }], edited by hand
   hooks/
     useMetronome.ts       # owns one engine instance; syncs bpm/steps/volume; exposes isPlaying/activeStep/toggle
     usePersistentState.ts # useState + localStorage with a validator fallback
@@ -67,8 +77,8 @@ src/
     useTapTempo.ts        # tap(timeMs) → BPM via TapTempo, plus flash state
     useKeyboardShortcuts.ts # global Space → start/stop, Enter → tap
   components/             # presentational: TempoControl, StepGrid, DropsControl, SoundSelect, Select, SliderRow, CommitNumberInput, StartStopButton,
-                          # TapTempoButton, VolumeFader, ThemeToggle
-  App.tsx                 # wires persistent state → hooks → components
+                          # TapTempoButton, VolumeFader, Page, Window, Module, MenuBar, PlayingIndicator, Led, BeatLight
+  App.tsx                 # page frame for every route: desktop, MenuBar, <Routes>, footer; global shortcuts; scroll to top on navigation
 ```
 
 ### Audio timing rules (important)
@@ -91,8 +101,8 @@ The app looks like a classic Mac application in a warm beige palette. The accent
 
 - **Page and chrome:**
   - A dithered `.desktop` pattern fills the page: sky blue (`#b0def3`) in light mode, twilight indigo (`#1d1a36`, the sky at dusk) in dark mode. Text placed directly on it (the footer) uses `text-ink`; `ink-muted` is too faint on the blue.
-  - A sticky classic menu bar (`MenuBar`) sits at the top: ".nome", then a **Sound** menu (kits, duplicating the Sound dropdown) and a **View** menu (Light / Dark / Match System).
-  - The app sits in a `Window`: a pinstriped title bar with the title "Controls" (no close box), a 1px outline and a hard offset shadow (`--color-shadow`), with square corners.
+  - A sticky classic menu bar (`MenuBar`) sits at the top: ".nome" (a link home), a **Sounds** menu (kits, duplicating the Sound dropdown), a **Mode** menu (Morning Dove = light / Night Owl = dark / Match System), and a **Guide** link. Page links are `NavLink`s shown inverted on the current page (`aria-current="page"`). On any page other than the metronome, while playing, the bar's right end shows `PlayingIndicator` (red LED, "Playing", Stop).
+  - Each page sits in a `Window` (via `Page`): a pinstriped title bar with the page's title ("Controls" for the metronome, "Guide", ...; no close box), a 1px outline and a hard offset shadow (`--color-shadow`), with square corners.
   - Sections are classic group boxes (`Module`): a thin outline with the title sitting in the top border.
   - **Layout:** on phones and narrow windows it's one column: Tempo, Steps, Output, then Start. From the `md` breakpoint (768px) the window widens to `max-w-3xl` (the menu bar matches) and becomes a two-column grid (`md:grid-rows-[auto_1fr_auto]`): Tempo over Output on the left, Steps spanning both rows on the right, and Start across the bottom. Extra height from a tall Steps box goes to the Output row, so Tempo keeps its natural size. Inside Steps, Drops is pinned to the bottom. Grid placement is passed to `Module` via its `className` prop.
 - **Colours:** defined once as CSS variables in `src/index.css` (`--nome-*`, with dark overrides under `.dark`) and exposed to Tailwind via `@theme inline` as `page`, `line`, `shadow`, `panel`, `ink`, `ink-muted`, `rule`, `key`, `accent`, `accent-deep`, `lcd` (near-black in both themes). Use these names (`bg-panel`, `border-line`, ...); don't use raw Tailwind palette colours (zinc, indigo, ...).
@@ -139,6 +149,9 @@ The app looks like a classic Mac application in a warm beige palette. The accent
 - Accessibility: every control needs a label and must work from the keyboard. Step pads describe their state in `aria-label`; decorative LEDs and markers are `aria-hidden`.
 
 ## Known gotchas
+
+- **Links and the Enter shortcut:** the global Return = tap tempo shortcut calls `preventDefault`, which would stop keyboard users following links. `useKeyboardShortcuts` therefore skips Tab-focused `a[href]` as well as buttons and the Select. Keep any new focusable control type in that selector if it uses Space/Enter itself.
+- **Shared state lives above the routes:** anything that must survive navigation (playback, settings) goes in `MetronomeProvider`, not in a page component; pages unmount when you leave them.
 
 - **Focus outlines need `outline-solid`:** in Tailwind v4, `outline-none` sets the outline style to none and `outline-2` only sets the width, so a focus ring written as `outline-none focus-visible:outline-2` never shows. Always add `focus-visible:outline-solid` (or `focus-within:outline-solid`). Keys also transition `outline-color`, so wait about 100ms before measuring a focus ring's colour in tests.
 

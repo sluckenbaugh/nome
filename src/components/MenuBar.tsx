@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
+import { Link, NavLink } from 'react-router'
 
 export interface MenuItem {
   label: string
@@ -11,8 +12,19 @@ export interface Menu {
   items: MenuItem[]
 }
 
+export interface MenuLink {
+  label: string
+  to: string
+}
+
 interface Props {
   appName: string
+  /** Where the app name links to. */
+  homeTo: string
+  /** Plain page links shown after the menus; the current page is shown inverted. */
+  links?: MenuLink[]
+  /** Shown at the right end of the bar (e.g. the playing indicator). */
+  aside?: ReactNode
   menus: Menu[]
 }
 
@@ -22,7 +34,7 @@ interface Props {
  * Keyboard: ↓ / Enter / Space on a title opens it; in a menu ↑/↓/Home/End move, ←/→ switch menus,
  * Enter/Space choose, Esc closes. Keys handled here don't reach the global Space/Enter shortcuts.
  */
-export function MenuBar({ appName, menus }: Props) {
+export function MenuBar({ appName, homeTo, menus, links = [], aside }: Props) {
   const [open, setOpen] = useState<number | null>(null)
   const barRef = useRef<HTMLDivElement>(null)
   const titleRefs = useRef<(HTMLButtonElement | null)[]>([])
@@ -104,7 +116,9 @@ export function MenuBar({ appName, menus }: Props) {
   return (
     <div ref={barRef} className="sticky top-0 z-30 border-b border-line bg-panel shadow-[0_1px_0_var(--color-shadow)]">
       <nav aria-label="Menu" className="mx-auto flex h-8 max-w-md items-stretch px-1 md:max-w-3xl">
-        <span className="flex items-center px-2 text-sm font-bold">{appName}</span>
+        <Link to={homeTo} className="flex items-center px-2 text-sm font-bold outline-none focus-visible:underline">
+          {appName}
+        </Link>
         {menus.map((menu, m) => (
           <div key={menu.label} className="relative flex">
             <button
@@ -155,6 +169,16 @@ export function MenuBar({ appName, menus }: Props) {
             )}
           </div>
         ))}
+        {links.map((link) => (
+          <NavLink
+            key={link.to}
+            to={link.to}
+            className={({ isActive }) => `flex items-center px-2.5 text-sm outline-none focus-visible:underline ${isActive ? 'bg-ink text-panel' : ''}`}
+          >
+            {link.label}
+          </NavLink>
+        ))}
+        {aside && <div className="ml-auto flex items-center">{aside}</div>}
       </nav>
     </div>
   )
