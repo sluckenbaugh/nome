@@ -2,6 +2,8 @@
 @import "@fontsource/barlow-condensed/latin-500.css";
 @import "@fontsource/barlow-condensed/latin-600.css";
 @import "@fontsource/barlow-condensed/latin-700.css";
+@import "@fontsource/pixelify-sans/latin-500.css";
+@import "@fontsource/pixelify-sans/latin-700.css";
 
 /* Dark mode is driven by a `dark` class on <html> (see useTheme) so users can override the OS setting. */
 @custom-variant dark (&:where(.dark, .dark *));
@@ -14,11 +16,15 @@
 }
 
 /*
- * Vintage hardware palette. Components use these as Tailwind colours (bg-panel, text-ink, ...),
+ * Warm palette applied to classic-Mac window chrome. Components use these as Tailwind colours (bg-panel, text-ink, ...),
  * so the whole look can be retuned here. Dark values swap in under `.dark`.
  */
 :root {
   --nome-page: #c9bfa6;
+  --nome-page-dot: #bcb195;
+  /* Window/menu outlines and the hard drop shadow. */
+  --nome-line: #2b261d;
+  --nome-shadow: #2b261d;
   --nome-body: #d9cfb8;
   --nome-panel: #e8e0cc;
   --nome-ink: #2b261d;
@@ -29,8 +35,6 @@
   --nome-amber: #f2a20c;
   --nome-amber-deep: #c47f00;
   --nome-led-off: #8c7f63;
-  --nome-wood: #6b4226;
-  --nome-wood-dark: #4f2f1a;
   --nome-lcd: #1a1712;
   --nome-lcd-on: #ffb000;
   --nome-pad-mute: #a89c82;
@@ -38,6 +42,9 @@
 
 .dark {
   --nome-page: #14120e;
+  --nome-page-dot: #1d1a15;
+  --nome-line: #8c7f63;
+  --nome-shadow: #000;
   --nome-body: #26221b;
   --nome-panel: #332d24;
   --nome-ink: #e8dfcb;
@@ -46,13 +53,13 @@
   --nome-key: #463e32;
   --nome-key-edge: #1a1712;
   --nome-led-off: #3d3428;
-  --nome-wood: #4a2e1b;
-  --nome-wood-dark: #331f11;
   --nome-pad-mute: #1f1c17;
 }
 
 @theme inline {
   --color-page: var(--nome-page);
+  --color-line: var(--nome-line);
+  --color-shadow: var(--nome-shadow);
   --color-body: var(--nome-body);
   --color-panel: var(--nome-panel);
   --color-ink: var(--nome-ink);
@@ -63,14 +70,13 @@
   --color-amber: var(--nome-amber);
   --color-amber-deep: var(--nome-amber-deep);
   --color-led-off: var(--nome-led-off);
-  --color-wood: var(--nome-wood);
-  --color-wood-dark: var(--nome-wood-dark);
   --color-lcd: var(--nome-lcd);
   --color-lcd-on: var(--nome-lcd-on);
   --color-pad-mute: var(--nome-pad-mute);
 
   --font-sans: "Barlow Condensed", ui-sans-serif, system-ui, sans-serif;
   --font-lcd: "DSEG7 Classic", ui-monospace, monospace;
+  --font-pixel: "Pixelify Sans", ui-monospace, monospace;
 }
 
 html {
@@ -85,11 +91,14 @@ body {
   color: var(--color-ink);
 }
 
-/* Walnut end-cheeks: vertical grain over a rounded shading gradient. */
-.wood {
-  background:
-    repeating-linear-gradient(90deg, rgb(0 0 0 / 0.07) 0 1px, transparent 1px 3px, rgb(255 255 255 / 0.04) 3px 4px, transparent 4px 7px),
-    linear-gradient(90deg, var(--color-wood-dark), var(--color-wood) 45%, var(--color-wood-dark));
+/* Classic desktop: a fine two-tone checker dither behind the window. */
+.desktop {
+  background: repeating-conic-gradient(var(--color-page) 0 25%, var(--nome-page-dot) 0 50%) 0 0 / 4px 4px;
+}
+
+/* Classic title-bar pinstripes. */
+.title-stripes {
+  background: repeating-linear-gradient(to bottom, var(--color-line) 0 1px, transparent 1px 3px);
 }
 
 /* Hardware fader: recessed groove with a rectangular cap and centre line. */

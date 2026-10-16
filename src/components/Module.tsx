@@ -1,25 +1,21 @@
-import type { ReactNode } from 'react'
-import { SILKSCREEN } from './ui'
+import { useId, type ReactNode } from 'react'
 
 interface Props {
   label: string
-  /** Controls shown at the right end of the header rule. */
+  /** Controls shown right-aligned at the top of the box. */
   aside?: ReactNode
   children: ReactNode
 }
 
-/** A recessed panel section of the device with a printed label and rule. */
+/** A classic group box: thin outline with its title sitting in the top border. */
 export function Module({ label, aside, children }: Props) {
+  const titleId = useId()
   return (
-    <section
-      aria-label={label}
-      className="rounded-md border border-rule bg-panel px-4 pt-3 pb-4 shadow-[inset_0_1px_0_rgb(255_255_255/0.35)] dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.04)]"
-    >
-      <header className="mb-3 flex min-h-9 items-center gap-3">
-        <h2 className={SILKSCREEN}>{label}</h2>
-        <span aria-hidden className="h-px flex-1 bg-rule" />
-        {aside}
-      </header>
+    <section aria-labelledby={titleId} className="relative mt-2 border border-ink-muted/60 px-3 pt-5 pb-3">
+      <h2 id={titleId} className="absolute -top-2.5 left-2 bg-panel px-1.5 font-pixel text-sm leading-5 font-medium">
+        {label}
+      </h2>
+      {aside && <div className="-mt-1 mb-3 flex justify-end">{aside}</div>}
       {children}
     </section>
   )

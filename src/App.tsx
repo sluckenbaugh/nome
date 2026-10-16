@@ -1,5 +1,6 @@
 import { BeatLight } from './components/BeatLight'
 import { DropsControl } from './components/DropsControl'
+import { MenuBar } from './components/MenuBar'
 import { Module } from './components/Module'
 import { SoundSelect } from './components/SoundSelect'
 import { StartStopButton } from './components/StartStopButton'
@@ -7,9 +8,8 @@ import { StepCount } from './components/StepCount'
 import { StepGrid } from './components/StepGrid'
 import { TapTempoButton } from './components/TapTempoButton'
 import { TempoControl } from './components/TempoControl'
-import { ThemeToggle } from './components/ThemeToggle'
-import { SILKSCREEN } from './components/ui'
 import { VolumeFader } from './components/VolumeFader'
+import { Window } from './components/Window'
 import { getKit, isKitId, SOUND_KITS } from './audio/soundKits'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { useMetronome } from './hooks/useMetronome'
@@ -29,25 +29,30 @@ export default function App() {
   const [drops, setDrops] = usePersistentState('nome:drops', DEFAULT_DROPS, isDropSettings)
   const [kitId, setKitId] = usePersistentState('nome:kit', SYNTH_KIT_ID, isKitId)
   const kit = getKit(kitId)
-  const { isDark, toggleTheme } = useTheme()
+  const { preference: theme, setPreference: setTheme } = useTheme()
   const { isPlaying, activeBeat, activeStep, activeDropped, toggle } = useMetronome({ bpm, steps, volume, drops, kit })
   const { tap, flash } = useTapTempo(setBpm)
   useKeyboardShortcuts({ onSpace: toggle, onEnter: tap })
 
   return (
-    <div className="min-h-dvh bg-page px-3 py-6 font-sans text-ink sm:py-10">
-      <div className="mx-auto flex max-w-md items-stretch drop-shadow-[0_10px_18px_rgb(0_0_0/0.25)]">
-        <div aria-hidden className="wood w-3 shrink-0 rounded-l-md sm:w-5" />
-        <div className="min-w-0 flex-1 border-y border-black/15 bg-body px-3 pt-3 pb-4 sm:px-4">
-          <header className="mb-3 flex items-center justify-between px-1">
-            <div className="flex items-baseline gap-3">
-              <h1 className="text-2xl font-bold tracking-tight">.nome</h1>
-              <span className={SILKSCREEN}>Metronome</span>
-            </div>
-            <ThemeToggle isDark={isDark} onToggle={toggleTheme} />
-          </header>
-
-          <main className="flex flex-col gap-3">
+    <div className="desktop min-h-dvh font-sans text-ink">
+      <MenuBar
+        appName=".nome"
+        menus={[
+          { label: 'Sound', items: SOUND_KITS.map((k) => ({ label: k.label, checked: k.id === kitId, onSelect: () => setKitId(k.id) })) },
+          {
+            label: 'View',
+            items: [
+              { label: 'Light', checked: theme === 'light', onSelect: () => setTheme('light') },
+              { label: 'Dark', checked: theme === 'dark', onSelect: () => setTheme('dark') },
+              { label: 'Match System', checked: theme === 'system', onSelect: () => setTheme('system') },
+            ],
+          },
+        ]}
+      />
+      <div className="mx-auto max-w-md px-3 pt-6 sm:pt-10">
+        <Window title="Metronome">
+          <main className="flex flex-col gap-4">
             <Module label="Tempo">
               <TempoControl
                 bpm={bpm}
@@ -73,11 +78,10 @@ export default function App() {
 
             <StartStopButton isPlaying={isPlaying} onToggle={toggle} />
           </main>
-        </div>
-        <div aria-hidden className="wood w-3 shrink-0 rounded-r-md sm:w-5" />
+        </Window>
       </div>
 
-      <footer className="px-4 py-6 text-center text-xs text-ink-muted">Free, no sign-up. On iPhone, turn off silent mode to hear clicks.</footer>
+      <footer className="px-4 py-8 text-center text-xs text-ink-muted">Free, no sign-up. On iPhone, turn off silent mode to hear clicks.</footer>
     </div>
   )
 }

@@ -40,7 +40,7 @@ Before saying work is finished, run `npx tsc -b`, `npm run lint`, `npm test` and
   - **Files:** WAV only (MP3, AAC and Opus add silence at the start, which makes clicks late). Mono, 48 kHz, 16-bit, accent peak around −1 dBFS, normal 3–6 dB quieter. Keep clicks under about 150ms so they don't overlap at 300 BPM.
   - **Loading:** kits are decoded once with an `OfflineAudioContext` (`src/audio/samples.ts`), so no user gesture is needed and they load before Start. Leading silence below −60 dBFS is skipped automatically (`findOnset` → `source.start(time, offset)`). While a kit is loading, or if it fails to load, the engine plays Classic clicks instead.
 - **Saved settings:** stored in `localStorage` with the keys `nome:bpm`, `nome:steps`, `nome:volume`, `nome:drops` (`{enabled, density}`), `nome:kit` (kit id) and `nome:theme`.
-- **Theme:** follows the OS setting until the user toggles it. After that the choice is stored as `'light'|'dark'`.
+- **Theme:** chosen in the View menu: Light, Dark or Match System (the default, which follows the OS). Stored as `'light'|'dark'|'system'`.
 - **Keyboard:** **Space = Start/Stop** and **Enter/Return = tap tempo**, handled for the whole page in `useKeyboardShortcuts.ts`. The shortcuts are skipped while typing (so Enter in the BPM field confirms the value), and on a button reached with Tab (navigation mode is tracked: Tab sets keyboard mode, any pointerdown clears it), so Tab users can still press buttons with Space or Enter. A button focused by a mouse click doesn't block them; `preventDefault` stops that button from double-firing.
 
 ## Architecture
@@ -85,21 +85,32 @@ The engine uses the lookahead scheduler from Chris Wilson's article "A Tale of T
 - Volume uses `setTargetAtTime` so moving the fader doesn't cause clicks or pops.
 - The visual beat uses a `{step, dropped, count, time}` queue, drained by `requestAnimationFrame` against `currentTime - outputLatency`, so the LEDs match what's audible.
 
-## Visual design (vintage hardware)
+## Visual design (warm early-Mac)
 
-The app looks like a piece of 70s/80s studio gear: a beige device with walnut end-cheeks, split into **Tempo**, **Steps** and **Output** modules, with a full-width amber **Start** key at the bottom. It was built on the `styling` branch.
+The app looks like a classic Mac application in a warm beige/amber palette, built on the `styling` branch. It started as a "vintage hardware" design and was reworked to feel like software rather than physical gear, keeping the raised keys, LCD, LEDs, pads and faders.
 
-- **Colours:** defined once as CSS variables in `src/index.css` (`--nome-*`, with dark overrides under `.dark`) and exposed to Tailwind via `@theme inline` as `page`, `body`, `panel`, `ink`, `ink-muted`, `rule`, `key`, `key-edge`, `amber`, `amber-deep`, `led-off`, `wood`, `wood-dark`, `lcd`, `lcd-on`, `pad-mute`. Use these names (`bg-panel`, `text-ink-muted`, ...); don't use raw Tailwind palette colours (zinc, indigo, ...).
-- **Fonts:** Barlow Condensed (latin 500/600/700 from `@fontsource`) is the UI font. DSEG7 Classic Bold (`font-lcd`) is used for LCD digits; it's vendored in `src/assets/fonts/dseg7/` with its OFL licence.
+- **Page and chrome:**
+  - A dithered `.desktop` pattern fills the page.
+  - A sticky classic menu bar (`MenuBar`) sits at the top: ".nome", then a **Sound** menu (kits, duplicating the Sound dropdown) and a **View** menu (Light / Dark / Match System).
+  - The app sits in a `Window`: a pinstriped title bar with a decorative close box and the title "Metronome", a 1px outline and a hard offset shadow (`--color-shadow`), with square corners.
+  - Sections are classic group boxes (`Module`): a thin outline with the title (pixel font) sitting in the top border.
+- **Colours:** defined once as CSS variables in `src/index.css` (`--nome-*`, with dark overrides under `.dark`) and exposed to Tailwind via `@theme inline` as `page`, `line`, `shadow`, `body`, `panel`, `ink`, `ink-muted`, `rule`, `key`, `key-edge`, `amber`, `amber-deep`, `led-off`, `lcd`, `lcd-on`, `pad-mute`. Use these names (`bg-panel`, `border-line`, ...); don't use raw Tailwind palette colours (zinc, indigo, ...).
+- **Fonts:**
+  - Pixelify Sans (`font-pixel`, latin 500/700) for the menu bar, window title and group-box titles only.
+  - Barlow Condensed (latin 500/600/700) for everything else.
+  - DSEG7 Classic Bold (`font-lcd`) for LCD digits; it's vendored in `src/assets/fonts/dseg7/` with its OFL licence.
+  - All are bundled, with no Google Fonts requests.
 - **Shared pieces:**
-  - `src/components/ui.ts`: `KEY_BASE` (shape and press behaviour, no colours or alignment), `KEY_FACE` (standard colours), `KEY` (base + face + centred), `KEY_SM`, `KEY_LATCHED` and `SILKSCREEN` (small printed labels). When a key needs different colours or alignment, combine `KEY_BASE` with its own classes rather than overriding `KEY`, because conflicting Tailwind utilities don't reliably override each other.
-  - `Led` (on / off / hollow) and `Module` (panel with printed label, rule and optional header controls).
-  - `.fader` (hardware slider styling), `.wood` and `.lcd-glow` in `index.css`.
+  - `src/components/ui.ts`: `KEY_BASE` (shape and press behaviour, no colours or alignment), `KEY_FACE` (standard colours), `KEY` (base + face + centred), `KEY_SM`, `KEY_LATCHED` and `SILKSCREEN` (small uppercase labels). When a key needs different colours or size, combine `KEY_BASE` with its own classes rather than overriding `KEY`/`KEY_SM`, because conflicting Tailwind utilities (e.g. `h-9` vs `h-6`, `bg-key` vs `bg-amber`) don't reliably override each other.
+  - `Led` (on / off / hollow, plus `tone="red"` for use on amber surfaces) and `Module`, `Window`, `MenuBar`.
+  - `.fader`, `.desktop`, `.title-stripes` and `.lcd-glow` in `index.css`.
+- **Start key:** amber, wrapped in the classic default-button ring. Its LED lights red while playing, because an amber LED would vanish on the amber key.
 - **LCDs:** the tempo display shows faint unlit `888` segments behind the editable digits, a `BeatLight` bottom-left and "BPM" bottom-right. The step count is a small LCD too.
 - **Beat feedback:**
   - The LED above the current pad lights, and the pad sinks (`motion-safe:` only, so it's skipped with reduced motion).
   - `BeatLight` flashes once per beat: brighter on accents, a hollow ring on dropped beats, and nothing on muted steps. It restarts by remounting on the engine's `ActiveBeat.count`, which increases every beat, so repeats of the same step still flash.
 - **Pads:** accent pads are amber with ▲, normal pads are plain keys, and muted pads are flat and dark with "MUTE". Each pad shows its step number.
+- **Menus and keys:** `MenuBar` handles its own keys and stops Space/Enter inside an open menu from reaching the global shortcuts, like `Select`. Focus moves into the menu on open and returns to the menu title on Esc or after choosing.
 
 ## Conventions
 

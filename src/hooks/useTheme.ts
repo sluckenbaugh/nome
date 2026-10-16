@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { usePersistentState } from './usePersistentState'
 
 export type ThemePreference = 'system' | 'light' | 'dark'
@@ -24,7 +24,5 @@ export function useTheme() {
     document.documentElement.classList.toggle('dark', isDark)
   }, [isDark])
 
-  const toggleTheme = useCallback(() => setPreference(isDark ? 'light' : 'dark'), [isDark, setPreference])
-
-  return { isDark, toggleTheme }
+  return { isDark, preference, setPreference }
 }
