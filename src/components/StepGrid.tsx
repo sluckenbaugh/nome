@@ -1,24 +1,31 @@
 import { cycleStep, type StepState } from '../logic/steps'
 import { Led } from './Led'
-import { KEY_BASE, KEY_FACE } from './ui'
+import { KEY_BASE, KEY_FACE, KEY_INVERTED } from './ui'
 
 interface Props {
   steps: StepState[]
   activeStep: number
-  /** The active beat was silenced by Drops: its LED shows hollow and the pad doesn't press. */
+  /** The active beat was silenced by Drops: its LED shows hollow and the pad doesn't invert. */
   activeDropped: boolean
   onChange: (steps: StepState[]) => void
 }
 
 const PAD_FACE: Record<StepState, string> = {
   normal: KEY_FACE,
-  accent: 'border-amber-deep bg-[color-mix(in_srgb,var(--color-amber)_55%,var(--color-key))] text-lcd',
-  // Muted pads sit flat and dark, like an unlit key.
-  mute: 'border-rule bg-pad-mute text-ink-muted shadow-[inset_0_1px_3px_rgb(0_0_0/0.35)]',
+  accent: 'border-line bg-amber text-lcd',
+  // Muted pads get the classic grey dither, like a disabled control.
+  mute: 'dither border-ink-muted/60 bg-panel text-ink-muted',
 }
 
-/** Sinks the pad on its beat; skipped when the user prefers reduced motion. */
-const PAD_PRESSED = 'motion-safe:translate-y-[2px] motion-safe:shadow-[0_0_0_var(--color-key-edge),0_1px_2px_rgb(0_0_0/0.15)]'
+/**
+ * On its beat a pad flashes inverted. Accents go near-black with amber (in both themes, since `ink` is
+ * light in dark mode) so they still read as accents.
+ */
+const PAD_ON_BEAT: Record<StepState, string> = {
+  normal: KEY_INVERTED,
+  accent: 'border-line bg-lcd text-amber',
+  mute: PAD_FACE.mute,
+}
 
 export function StepGrid({ steps, activeStep, activeDropped, onChange }: Props) {
   return (
@@ -35,9 +42,7 @@ export function StepGrid({ steps, activeStep, activeDropped, onChange }: Props) 
                 onClick={() => onChange(cycleStep(steps, i))}
                 aria-label={`Step ${i + 1}: ${state}. Click to change.`}
                 title="Click to cycle: normal → accent → mute"
-                className={`${KEY_BASE} ${PAD_FACE[state]} relative size-14 justify-center text-[10px] ${
-                  state === 'mute' ? 'shadow-none active:shadow-none' : ''
-                } ${isActive && !activeDropped && state !== 'mute' ? PAD_PRESSED : ''}`}
+                className={`${KEY_BASE} ${isActive && !activeDropped ? PAD_ON_BEAT[state] : PAD_FACE[state]} relative size-14 justify-center text-[10px]`}
               >
                 {state === 'accent' && <span aria-hidden className="text-base leading-none">▲</span>}
                 {state === 'mute' && <span aria-hidden className="tracking-[0.15em]">Mute</span>}

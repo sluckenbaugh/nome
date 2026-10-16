@@ -9,11 +9,11 @@ interface Props {
 
 export function Led({ on, hollow = false, tone = 'amber', className = 'size-2.5' }: Props) {
   const state = !on
-    ? 'bg-led-off shadow-[inset_0_1px_1px_rgb(0_0_0/0.4)]'
+    ? 'border border-ink-muted/60 bg-transparent'
     : hollow
       ? 'border-2 border-amber bg-transparent'
       : tone === 'red'
-        ? 'bg-[#e0321b] shadow-[0_0_6px_2px_rgb(224_50_27/0.6)]'
-        : 'bg-amber shadow-[0_0_6px_2px_rgb(242_162_12/0.65)]'
-  return <span aria-hidden className={`inline-block shrink-0 rounded-full transition-[background-color,box-shadow] duration-75 ${state} ${className}`} />
+        ? 'border border-line bg-[#e0321b]'
+        : 'border border-line bg-amber'
+  return <span aria-hidden className={`inline-block shrink-0 rounded-full transition-colors duration-75 ${state} ${className}`} />
 }

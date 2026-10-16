@@ -1,5 +1,5 @@
 import { Led } from './Led'
-import { KEY_BASE, KEY_LATCHED } from './ui'
+import { KEY_BASE } from './ui'
 
 interface Props {
   isPlaying: boolean
@@ -15,7 +15,8 @@ export function StartStopButton({ isPlaying, onToggle }: Props) {
       onClick={onToggle}
       aria-pressed={isPlaying}
       aria-keyshortcuts="Space"
-      className={`${KEY_BASE} h-14 w-full justify-center gap-3 border-amber-deep bg-amber text-lg text-lcd ${isPlaying ? KEY_LATCHED : ''}`}
+      // Near-black with amber text while playing (in both themes), so the red LED stays visible.
+        className={`${KEY_BASE} h-14 w-full justify-center gap-3 border-line text-lg ${isPlaying ? 'bg-lcd text-amber' : 'bg-amber text-lcd'}`}
     >
         <Led on={isPlaying} tone="red" />
       {isPlaying ? 'Stop' : 'Start'}

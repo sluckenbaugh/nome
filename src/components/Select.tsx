@@ -182,7 +182,7 @@ export function Select({ options, value, onChange, labelledBy }: Props) {
           aria-labelledby={labelledBy}
           // Keep focus on the trigger while clicking options.
           onMouseDown={(e) => e.preventDefault()}
-          className={`absolute inset-x-0 z-20 max-h-64 overflow-auto rounded-md border border-rule bg-panel p-1 shadow-[0_8px_20px_rgb(0_0_0/0.3)] ${
+          className={`absolute inset-x-0 z-20 max-h-64 overflow-auto border border-line bg-panel py-1 shadow-[2px_2px_0_var(--color-shadow)] ${
             openUp ? 'bottom-full mb-2' : 'top-full mt-2'
           }`}
         >
@@ -196,9 +196,10 @@ export function Select({ options, value, onChange, labelledBy }: Props) {
                 aria-selected={isSelected}
                 onClick={() => choose(i)}
                 onMouseMove={() => setActive(i)}
-                className={`flex cursor-pointer items-center justify-between rounded-[3px] px-3 py-2 text-sm font-semibold uppercase tracking-wider ${
-                  i === active ? 'bg-key' : ''
-                } ${isSelected ? 'text-amber-deep dark:text-amber' : 'text-ink'}`}
+                // Highlighted option is inverted, like the menu bar's menus.
+                className={`flex cursor-pointer items-center justify-between px-3 py-1.5 text-sm font-semibold uppercase tracking-wider ${
+                  i === active ? 'bg-ink text-panel' : isSelected ? 'text-amber-deep dark:text-amber' : 'text-ink'
+                }`}
               >
                 {option.label}
                 {isSelected && (

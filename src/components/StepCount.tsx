@@ -19,7 +19,7 @@ export function StepCount({ steps, onChange }: Props) {
         value={steps.length}
         onCommit={(count) => onChange(setStepCount(steps, count))}
         aria-label={`Number of steps (${MIN_STEPS}–${MAX_STEPS})`}
-        className="lcd-glow h-9 w-11 rounded-[4px] bg-lcd text-center font-lcd text-base text-lcd-on caret-lcd-on shadow-[inset_0_2px_4px_rgb(0_0_0/0.7)] outline-none [appearance:textfield] focus-visible:ring-2 focus-visible:ring-amber [&::-webkit-inner-spin-button]:appearance-none"
+        className="h-9 w-11 rounded-[4px] border border-line bg-lcd text-center font-lcd text-base text-lcd-on caret-lcd-on outline-none [appearance:textfield] focus-visible:ring-2 focus-visible:ring-amber [&::-webkit-inner-spin-button]:appearance-none"
       />
       <button type="button" className={KEY_SM} onClick={() => onChange(addStep(steps))} disabled={steps.length >= MAX_STEPS} aria-label="Add step">
         +

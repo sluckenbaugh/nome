@@ -18,7 +18,7 @@ export function TempoControl({ bpm, onChange, tapKey, beatLight }: Props) {
     <div className="flex flex-col gap-3">
       <div className="flex items-stretch gap-3">
         {/* Recessed LCD: faint unlit "888" segments sit behind the editable lit digits. */}
-        <label className="relative flex flex-1 flex-col justify-center rounded-[4px] bg-lcd px-3 py-2 shadow-[inset_0_2px_6px_rgb(0_0_0/0.7)]">
+        <label className="relative flex flex-1 flex-col justify-center rounded-[4px] border border-line bg-lcd px-3 py-2">
           <span className="relative ml-auto font-lcd text-[2.6rem] leading-none">
             <span aria-hidden className="text-lcd-on/10">
               888
@@ -28,7 +28,7 @@ export function TempoControl({ bpm, onChange, tapKey, beatLight }: Props) {
               max={MAX_BPM}
               value={bpm}
               onCommit={(value) => onChange(clampBpm(value))}
-              className="lcd-glow absolute inset-0 w-full bg-transparent text-right font-lcd text-lcd-on caret-lcd-on outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+              className="absolute inset-0 w-full bg-transparent text-right font-lcd text-lcd-on caret-lcd-on outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
               aria-label="Tempo in beats per minute"
             />
           </span>

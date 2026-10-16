@@ -18,8 +18,8 @@ export function BeatLight({ beat, steps }: Props) {
       : beat.dropped
         ? 'border-2 border-lcd-on'
         : state === 'accent'
-          ? 'bg-lcd-on shadow-[0_0_10px_4px_rgb(255_176_0/0.8)]'
-          : 'bg-lcd-on/80 shadow-[0_0_6px_2px_rgb(255_176_0/0.55)]'
+          ? 'bg-lcd-on'
+          : 'bg-lcd-on/60'
 
   return (
     <span aria-hidden className="relative inline-block size-2.5 rounded-full bg-lcd-on/10">
