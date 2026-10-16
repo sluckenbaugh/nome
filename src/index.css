@@ -23,8 +23,18 @@
   --nome-ink-muted: #6b6252;
   --nome-rule: #bfb398;
   --nome-key: #efe8d6;
+  /* Accent fill (Start, accent pads) and the text on it. */
   --nome-accent: #5ebd3e;
+  --nome-on-accent: #1a1712;
+  /* Accent-coloured text on light backgrounds (e.g. the selected sound). */
   --nome-accent-deep: #2f7d24;
+  /* The "active" accent state: Start while playing, an accent pad on its beat. */
+  --nome-accent-invert: #1a1712;
+  --nome-on-accent-invert: #5ebd3e;
+  /* Lit LEDs and the beat light. */
+  --nome-led: #5ebd3e;
+  /* Focus outlines and text carets. */
+  --nome-focus: #5ebd3e;
   --nome-lcd: #1a1712;
 }
 
@@ -38,8 +48,16 @@
   --nome-ink-muted: #a39880;
   --nome-rule: #4a4235;
   --nome-key: #463e32;
-  /* Light grey, slightly cool so it stays distinct from the warm cream ink. */
-  --nome-accent: #c8cbd2;
+  /*
+   * Black accent. Everything that sits on it or uses it as text/lines switches to cream so it stays
+   * visible on the dark panels; LEDs keep a cool light grey, since black lights wouldn't show.
+   */
+  --nome-accent: #000;
+  --nome-on-accent: #e8dfcb;
+  --nome-accent-invert: #e8dfcb;
+  --nome-on-accent-invert: #000;
+  --nome-led: #c8cbd2;
+  --nome-focus: #e8dfcb;
 }
 
 @theme inline {
@@ -53,6 +71,11 @@
   --color-key: var(--nome-key);
   --color-accent: var(--nome-accent);
   --color-accent-deep: var(--nome-accent-deep);
+  --color-on-accent: var(--nome-on-accent);
+  --color-accent-invert: var(--nome-accent-invert);
+  --color-on-accent-invert: var(--nome-on-accent-invert);
+  --color-led: var(--nome-led);
+  --color-focus: var(--nome-focus);
   --color-lcd: var(--nome-lcd);
 
   /* IBM Plex Mono is the single typeface for all text. */
@@ -130,11 +153,11 @@ body {
   outline: none;
 }
 .fader:focus-visible::-webkit-slider-thumb {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 .fader:focus-visible::-moz-range-thumb {
-  outline: 2px solid var(--color-accent);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 

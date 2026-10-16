@@ -11,9 +11,9 @@ export function Led({ on, hollow = false, tone = 'accent', className = 'size-2.5
   const state = !on
     ? 'border border-ink-muted/60 bg-transparent'
     : hollow
-      ? 'border-2 border-accent bg-transparent'
+      ? 'border-2 border-led bg-transparent'
       : tone === 'red'
         ? 'border border-line bg-[#e0321b]'
-        : 'border border-line bg-accent'
+        : 'border border-line bg-led'
   return <span aria-hidden className={`inline-block shrink-0 rounded-full transition-colors duration-75 ${state} ${className}`} />
 }

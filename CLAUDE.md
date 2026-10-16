@@ -87,7 +87,7 @@ The engine uses the lookahead scheduler from Chris Wilson's article "A Tale of T
 
 ## Visual design (warm early-Mac)
 
-The app looks like a classic Mac application in a warm beige palette with a green accent: `#5ebd3e` (the green from Apple's original rainbow logo) in light mode, with `accent-deep` `#2f7d24` for green text on light backgrounds, and a cool light grey `#c8cbd2` in dark mode (cool so it stays distinct from the warm cream ink), built on the `styling` branch. It started as a "vintage hardware" design and was reworked to feel like software rather than physical gear. The controls are flat: 1px outlines, no bevels, glows or drop shadows inside the window, and pressed or "on" states shown by inverting the colours.
+The app looks like a classic Mac application in a warm beige palette. The accent is Apple-logo green `#5ebd3e` in light mode and black in dark mode (see **Accent roles** below), built on the `styling` branch. It started as a "vintage hardware" design and was reworked to feel like software rather than physical gear. The controls are flat: 1px outlines, no bevels, glows or drop shadows inside the window, and pressed or "on" states shown by inverting the colours.
 
 - **Page and chrome:**
   - A dithered `.desktop` pattern fills the page: sky blue (`#b0def3`) in light mode, twilight indigo (`#1d1a36`, the sky at dusk) in dark mode. Text placed directly on it (the footer) uses `text-ink`; `ink-muted` is too faint on the blue.
@@ -107,16 +107,27 @@ The app looks like a classic Mac application in a warm beige palette with a gree
     - `KEY` (base + caps + face + centred) and `KEY_SM`.
     - `ROW_LABEL`: row labels such as Sound and Volume, styled like the section titles (`text-sm font-medium text-ink`, normal case).
     - Pick one face per state instead of layering a state class on top of another face. When a key needs different colours, size or lettering, combine `KEY_BASE` with its own classes rather than overriding `KEY`/`KEY_SM`, because conflicting Tailwind utilities (e.g. `h-9` vs `h-6`, `bg-key` vs `bg-accent`, `uppercase` vs `normal-case`) don't reliably override each other.
-  - `Led`, a flat circle: an outline when off, solid when on, a thick green ring when hollow (dropped), plus `tone="red"` for use on green surfaces. Also `Module`, `Window` and `MenuBar`.
+  - `Led`, a flat circle: an outline when off, solid when on, a thick `led`-coloured ring when hollow (dropped), plus `tone="red"` for use on accent-coloured surfaces. Also `Module`, `Window` and `MenuBar`.
   - In `index.css`: `.fader` (classic flat slider: an outlined track with a plain thumb that inverts while dragged), `.dither` (50% grey dither), `.desktop` and `.title-stripes`.
-- **Inverted colours in dark mode:** `ink` is light in dark mode, so "inverted" (`bg-ink`) becomes a cream fill. Where green text has to sit on a dark fill in both themes (Start while playing, accent pads on their beat), use `bg-lcd` instead.
-- **Start key:** green, wrapped in the classic default-button ring. While playing it turns near-black (`bg-lcd`) with green text, and its LED lights red.
+- **Accent roles:** the accent is split into separate colour roles, because black (the dark-mode accent) can't be used as text or lines on the dark panels. Use the role that matches the job; don't use `bg-accent` or `text-accent` for anything else.
+
+  | Token | Used for | Light | Dark |
+  |---|---|---|---|
+  | `accent` | Start key and accent pad fill | green `#5ebd3e` | black `#000` |
+  | `on-accent` | text on `accent` | near-black | cream |
+  | `accent-invert` / `on-accent-invert` | Start while playing, accent pad on its beat (fill / text) | near-black / green | cream / black |
+  | `accent-deep` | accent-coloured text on light panels (selected sound) | `#2f7d24` | not used (`dark:text-ink`) |
+  | `led` | lit LEDs, beat light, hollow "dropped" ring | green | cool grey `#c8cbd2` |
+  | `focus` | focus outlines and text carets | green | cream |
+
+- **Inverted colours in dark mode:** `ink` is light in dark mode, so "inverted" (`bg-ink`) becomes a cream fill.
+- **Start key:** `accent` fill with `on-accent` text, wrapped in the classic default-button ring. While playing it switches to `accent-invert` / `on-accent-invert`, and its LED lights red.
 - **Tempo layout:** the tempo field and the Tap key sit side by side, with the −, +, /2 and ×2 keys in a row of four beneath them, then the tempo slider. Below the `md` breakpoint (768px) the field and Tap are two equal squares (`grid-cols-2` + `aspect-square`). From `md` (the two-column wide layout) they split about 70:30 (`md:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]`), with `aspect-square` turned off so Tap stretches to the field's height. Tab order is field, Tap, then the four keys. `TempoControl` is a Tailwind container: the digits are `text-4xl` below 17rem of content (screens under about 360px) and `text-5xl` above, so three-digit tempos always fit. Tap shows its LED and "TAP", plus a "↵ Return" hint from `md` up only (hidden on small, mostly-touch screens).
-- **Number fields:** the tempo and step count are classic Mac text fields (cream `bg-key`, 1px outline, a green focus outline) with the number in large semibold type. The tempo field has a `BeatLight` bottom-left and "BPM" bottom-right. (They replaced earlier 7-segment LCD displays.)
+- **Number fields:** the tempo and step count are classic Mac text fields (cream `bg-key`, 1px outline, a `focus` outline) with the number in large semibold type. The tempo field has a `BeatLight` bottom-left and "BPM" bottom-right. (They replaced earlier 7-segment LCD displays.)
 - **Beat feedback:**
-  - The LED above the current pad lights, and the pad flashes inverted (accents go near-black with a green ▲). On a dropped beat the LED shows a hollow ring and the pad doesn't invert.
-  - `BeatLight` (a flat outlined dot) flashes green once per beat: brighter on accents, a hollow ring on dropped beats, and nothing on muted steps. It restarts by remounting on the engine's `ActiveBeat.count`, which increases every beat, so repeats of the same step still flash.
-- **Pads:** accent pads are solid green with ▲, normal pads are plain keys, and muted pads use the grey `.dither` with no label (the pattern alone marks them). Each pad shows its step number.
+  - The LED above the current pad lights, and the pad flashes inverted (accent pads use the `accent-invert` colours with a ▲). On a dropped beat the LED shows a hollow ring and the pad doesn't invert.
+  - `BeatLight` (a flat outlined dot) flashes in the `led` colour once per beat: brighter on accents, a hollow ring on dropped beats, and nothing on muted steps. It restarts by remounting on the engine's `ActiveBeat.count`, which increases every beat, so repeats of the same step still flash.
+- **Pads:** accent pads use the `accent` fill with ▲, normal pads are plain keys, and muted pads use the grey `.dither` with no label (the pattern alone marks them). Each pad shows its step number.
 - **Menus and keys:** `MenuBar` handles its own keys and stops Space/Enter inside an open menu from reaching the global shortcuts, like `Select`. Focus moves into the menu on open and returns to the menu title on Esc or after choosing.
 
 ## Conventions
@@ -128,6 +139,8 @@ The app looks like a classic Mac application in a warm beige palette with a gree
 - Accessibility: every control needs a label and must work from the keyboard. Step pads describe their state in `aria-label`; decorative LEDs and markers are `aria-hidden`.
 
 ## Known gotchas
+
+- **Focus outlines need `outline-solid`:** in Tailwind v4, `outline-none` sets the outline style to none and `outline-2` only sets the width, so a focus ring written as `outline-none focus-visible:outline-2` never shows. Always add `focus-visible:outline-solid` (or `focus-within:outline-solid`). Keys also transition `outline-color`, so wait about 100ms before measuring a focus ring's colour in tests.
 
 - **iOS:** the silent switch mutes Web Audio. The footer tells users about this.
 - **Sliders:** build every slider with `SliderRow` (label column `w-16`, the slider, value column `w-10`) so all slider tracks share the same left and right edges. The tempo slider has no label on purpose; its empty label column keeps it aligned.

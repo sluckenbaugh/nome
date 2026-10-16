@@ -16,10 +16,10 @@ export function BeatLight({ beat, steps }: Props) {
     beat.step < 0 || state === 'mute'
       ? null
       : beat.dropped
-        ? 'border-2 border-accent'
+        ? 'border-2 border-led'
         : state === 'accent'
-          ? 'bg-accent'
-          : 'bg-accent/60'
+          ? 'bg-led'
+          : 'bg-led/60'
 
   return (
     <span aria-hidden className="relative inline-block size-2.5 rounded-full border border-ink-muted/60">

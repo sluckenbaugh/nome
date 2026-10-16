@@ -4,11 +4,14 @@
  * Flat key: rounded rectangle with a 1px outline that inverts while pressed. Has no colours or
  * alignment or text style, so variants don't fight over the same utilities. Combine with a face
  * (KEY_FACE / KEY_INVERTED / custom), a justify-* class and usually KEY_CAPS.
+ *
+ * Focus: `outline-none` sets the outline style to none in Tailwind v4 and `outline-2` only sets the
+ * width, so the focus ring also needs `outline-solid` or it never shows.
  */
 export const KEY_BASE =
   'inline-flex select-none items-center rounded-[6px] border transition-colors duration-75 ' +
   'active:border-line active:bg-ink active:text-panel ' +
-  'outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:pointer-events-none disabled:opacity-40'
+  'outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-offset-2 focus-visible:outline-focus disabled:pointer-events-none disabled:opacity-40'
 
 /** Bold all-caps key lettering (Start, Tap, Drops, ...). The Sound dropdown leaves it off. */
 export const KEY_CAPS = 'font-semibold uppercase tracking-wider'

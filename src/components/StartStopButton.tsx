@@ -15,8 +15,8 @@ export function StartStopButton({ isPlaying, onToggle }: Props) {
       onClick={onToggle}
       aria-pressed={isPlaying}
       aria-keyshortcuts="Space"
-      // Near-black with accent text while playing (in both themes), so the red LED stays visible.
-        className={`${KEY_BASE} ${KEY_CAPS} h-14 w-full justify-center gap-3 border-line text-lg ${isPlaying ? 'bg-lcd text-accent' : 'bg-accent text-lcd'}`}
+      // Switches to the inverted accent colours while playing, so the red LED stays visible.
+        className={`${KEY_BASE} ${KEY_CAPS} h-14 w-full justify-center gap-3 border-line text-lg ${isPlaying ? 'bg-accent-invert text-on-accent-invert' : 'bg-accent text-on-accent'}`}
     >
         <Led on={isPlaying} tone="red" />
       {isPlaying ? 'Stop' : 'Start'}

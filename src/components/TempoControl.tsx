@@ -24,14 +24,14 @@ export function TempoControl({ bpm, onChange, tapKey, beatLight }: Props) {
       */}
       <div className="grid grid-cols-2 gap-3 md:grid-cols-[minmax(0,7fr)_minmax(0,3fr)]">
         {/* Classic text field: editable tempo, with the beat light and units along the bottom. */}
-        <label className="flex aspect-square min-w-0 flex-col md:aspect-auto rounded-[4px] border border-line bg-key p-3 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-accent">
+        <label className="flex aspect-square min-w-0 flex-col md:aspect-auto rounded-[4px] border border-line bg-key p-3 focus-within:outline-2 focus-within:outline-solid focus-within:outline-offset-2 focus-within:outline-focus">
           <CommitNumberInput
             min={MIN_BPM}
             max={MAX_BPM}
             value={bpm}
             onCommit={(value) => onChange(clampBpm(value))}
             // Smaller digits in the narrowest boxes so three-digit tempos always fit.
-            className="min-h-0 w-full flex-1 bg-transparent text-center text-4xl leading-none font-semibold tabular-nums text-ink caret-accent outline-none [appearance:textfield] @min-[17rem]:text-5xl [&::-webkit-inner-spin-button]:appearance-none"
+            className="min-h-0 w-full flex-1 bg-transparent text-center text-4xl leading-none font-semibold tabular-nums text-ink caret-focus outline-none [appearance:textfield] @min-[17rem]:text-5xl [&::-webkit-inner-spin-button]:appearance-none"
             aria-label="Tempo in beats per minute"
           />
           <span className="flex items-center justify-between">
