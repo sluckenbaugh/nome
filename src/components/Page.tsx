@@ -2,12 +2,12 @@ import { useEffect, useRef, type ReactNode } from 'react'
 import { useLocation } from 'react-router'
 import { Window } from './Window'
 
-const SITE_TITLE = 'Nome Metronome'
+export const SITE_TITLE = 'Nome'
 
 interface Props {
   /** Window title and main heading. */
   title: string
-  /** Browser tab title; defaults to "<title> — Nome Metronome". */
+  /** Browser tab title; defaults to "<title> — Nome". */
   documentTitle?: string
   /** Width classes for the window column. */
   widthClassName?: string

@@ -3,7 +3,6 @@ import { Route, Routes, useLocation } from 'react-router'
 import { SOUND_KITS } from './audio/soundKits'
 import { MenuBar } from './components/MenuBar'
 import { PlayingIndicator } from './components/PlayingIndicator'
-import { SilentModeNotice } from './components/SilentModeNotice'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { useTheme } from './hooks/useTheme'
 import { MetronomePage } from './pages/MetronomePage'
@@ -53,9 +52,7 @@ export default function App() {
         </Routes>
       </Suspense>
 
-      <SilentModeNotice />
-
-      <footer className="px-4 py-8 text-center text-xs text-ink">Free, no sign-up, no pop-ups, just clicks. On mobile, turn off  devices silent mode to hear audio.</footer>
+      <footer className="px-4 py-8 text-center text-xs text-ink">Free, no sign-up, no pop-ups, just clicks. On mobile, turn off silent mode to hear audio.</footer>
     </div>
   )
 }

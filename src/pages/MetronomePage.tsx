@@ -2,7 +2,7 @@ import { SOUND_KITS } from '../audio/soundKits'
 import { BeatLight } from '../components/BeatLight'
 import { DropsControl } from '../components/DropsControl'
 import { Module } from '../components/Module'
-import { Page } from '../components/Page'
+import { Page, SITE_TITLE } from '../components/Page'
 import { SoundSelect } from '../components/SoundSelect'
 import { StartStopButton } from '../components/StartStopButton'
 import { StepCount } from '../components/StepCount'
@@ -17,7 +17,7 @@ export function MetronomePage() {
     useMetronomeContext()
 
   return (
-    <Page title="Controls" documentTitle="Nome Metronome">
+    <Page title="Controls" documentTitle={SITE_TITLE}>
       {/*
         Phones: one column (Tempo, Steps, Output, Start). Wide screens: Tempo over Output on the
         left, Steps filling the right column, Start across the bottom. When Steps is taller, the
