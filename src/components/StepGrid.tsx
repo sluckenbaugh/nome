@@ -1,6 +1,6 @@
 import { cycleStep, type StepState } from '../logic/steps'
 import { Led } from './Led'
-import { KEY_BASE, KEY_FACE, KEY_INVERTED } from './ui'
+import { KEY_BASE, KEY_CAPS, KEY_FACE, KEY_INVERTED } from './ui'
 
 interface Props {
   steps: StepState[]
@@ -42,7 +42,7 @@ export function StepGrid({ steps, activeStep, activeDropped, onChange }: Props) 
                 onClick={() => onChange(cycleStep(steps, i))}
                 aria-label={`Step ${i + 1}: ${state}. Click to change.`}
                 title="Click to cycle: normal → accent → mute"
-                className={`${KEY_BASE} ${isActive && !activeDropped ? PAD_ON_BEAT[state] : PAD_FACE[state]} relative size-14 justify-center text-[10px]`}
+                className={`${KEY_BASE} ${KEY_CAPS} ${isActive && !activeDropped ? PAD_ON_BEAT[state] : PAD_FACE[state]} relative size-14 justify-center text-[10px]`}
               >
                 {state === 'accent' && <span aria-hidden className="text-base leading-none">▲</span>}
                 <span aria-hidden className="absolute bottom-0.5 left-1.5 text-[9px] opacity-50">

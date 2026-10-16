@@ -166,7 +166,7 @@ export function Select({ options, value, onChange, labelledBy }: Props) {
           focusedByPointer.current = false
           setOpen(false)
         }}
-        className={`${KEY_BASE} ${KEY_FACE} h-9 w-full cursor-pointer justify-between px-3 text-sm`}
+        className={`${KEY_BASE} ${KEY_FACE} h-9 w-full cursor-pointer justify-between px-3 text-sm font-medium`}
       >
         <span className="truncate">{selected?.label}</span>
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden className={`size-4 shrink-0 opacity-60 transition-transform ${open ? 'rotate-180' : ''}`}>
@@ -197,7 +197,7 @@ export function Select({ options, value, onChange, labelledBy }: Props) {
                 onClick={() => choose(i)}
                 onMouseMove={() => setActive(i)}
                 // Highlighted option is inverted, like the menu bar's menus.
-                className={`flex cursor-pointer items-center justify-between px-3 py-1.5 text-sm font-semibold uppercase tracking-wider ${
+                className={`flex cursor-pointer items-center justify-between px-3 py-1.5 text-sm font-medium ${
                   i === active ? 'bg-ink text-panel' : isSelected ? 'text-accent-deep dark:text-accent' : 'text-ink'
                 }`}
               >

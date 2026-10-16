@@ -100,7 +100,13 @@ The app looks like a classic Mac application in a warm beige palette with a gree
   - IBM Plex Mono (latin 400/500/600/700) is the only typeface, set as Tailwind's `font-sans`, so every element uses it by default. Numbers use `tabular-nums` so they don't shift as values change. It's much wider than a condensed font, so check that labels in the 64px `SliderRow` label column and small keys (Drops, Tap, pads) still fit when changing their text.
   - All are bundled, with no Google Fonts requests.
 - **Shared pieces:**
-  - `src/components/ui.ts`: `KEY_BASE` (flat rounded rectangle with a 1px outline that inverts while pressed; no colours or alignment), `KEY_FACE` (standard colours), `KEY_INVERTED` (latched on / on the beat), `KEY` (base + face + centred), `KEY_SM` and `SILKSCREEN` (small uppercase labels). Pick one face per state instead of layering a state class on top of another face. When a key needs different colours or size, combine `KEY_BASE` with its own classes rather than overriding `KEY`/`KEY_SM`, because conflicting Tailwind utilities (e.g. `h-9` vs `h-6`, `bg-key` vs `bg-green`) don't reliably override each other.
+  - `src/components/ui.ts`:
+    - `KEY_BASE`: a flat rounded rectangle with a 1px outline that inverts while pressed. It has no colours, alignment or text style.
+    - `KEY_CAPS`: bold all-caps lettering for keys (Start, Tap, Drops, pads, ...). The Sound dropdown deliberately leaves it off so it reads in normal case.
+    - Faces: `KEY_FACE` (standard colours) and `KEY_INVERTED` (latched on / on the beat).
+    - `KEY` (base + caps + face + centred) and `KEY_SM`.
+    - `ROW_LABEL`: row labels such as Sound and Volume, styled like the section titles (`text-sm font-medium text-ink`, normal case).
+    - Pick one face per state instead of layering a state class on top of another face. When a key needs different colours, size or lettering, combine `KEY_BASE` with its own classes rather than overriding `KEY`/`KEY_SM`, because conflicting Tailwind utilities (e.g. `h-9` vs `h-6`, `bg-key` vs `bg-accent`, `uppercase` vs `normal-case`) don't reliably override each other.
   - `Led`, a flat circle: an outline when off, solid when on, a thick green ring when hollow (dropped), plus `tone="red"` for use on green surfaces. Also `Module`, `Window` and `MenuBar`.
   - In `index.css`: `.fader` (classic flat slider: an outlined track with a plain thumb that inverts while dragged), `.dither` (50% grey dither), `.desktop` and `.title-stripes`.
 - **Inverted colours in dark mode:** `ink` is light in dark mode, so "inverted" (`bg-ink`) becomes a cream fill. Where green text has to sit on a dark fill in both themes (Start while playing, accent pads on their beat), use `bg-lcd` instead.

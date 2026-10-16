@@ -1,7 +1,7 @@
 import { DENSITY_STEP, type DropSettings } from '../logic/drops'
 import { Led } from './Led'
 import { SliderRow } from './SliderRow'
-import { KEY_BASE, KEY_FACE, KEY_INVERTED } from './ui'
+import { KEY_BASE, KEY_CAPS, KEY_FACE, KEY_INVERTED } from './ui'
 
 interface Props {
   drops: DropSettings
@@ -21,7 +21,7 @@ export function DropsControl({ drops, onChange }: Props) {
           aria-pressed={drops.enabled}
           title="Randomly mute beats to practise keeping time"
           // Fits the 64px label column so the fader stays aligned with the others; inverted while on.
-          className={`${KEY_BASE} ${drops.enabled ? KEY_INVERTED : KEY_FACE} h-8 w-full justify-center gap-1 px-1 text-[11px]`}
+          className={`${KEY_BASE} ${KEY_CAPS} ${drops.enabled ? KEY_INVERTED : KEY_FACE} h-8 w-full justify-center gap-1 px-1 text-[11px]`}
         >
           <Led on={drops.enabled} className="size-2" />
           Drops

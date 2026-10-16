@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { SILKSCREEN } from './ui'
+import { ROW_LABEL } from './ui'
 
 interface Props {
   /** Optional; the label column is kept (empty) when omitted so tracks stay aligned. */
@@ -24,7 +24,7 @@ interface Props {
 export function SliderRow({ label, display, value, min, max, step, onChange, ariaLabel, ariaValueText, dimmed = false }: Props) {
   return (
     <div className="flex w-full items-center gap-3">
-      <span className={`w-16 shrink-0 ${SILKSCREEN}`} aria-hidden={label ? undefined : true}>
+      <span className={`w-16 shrink-0 ${ROW_LABEL}`} aria-hidden={label ? undefined : true}>
         {label}
       </span>
       <input
