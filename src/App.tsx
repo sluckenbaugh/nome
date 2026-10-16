@@ -93,7 +93,7 @@ export default function App() {
         </Window>
       </div>
 
-      <footer className="px-4 py-8 text-center text-xs text-ink">Free, no sign-up. On iPhone, turn off silent mode to hear clicks.</footer>
+      <footer className="px-4 py-8 text-center text-xs text-ink">Free, no sign-up, no pop-ups, just clicks. On mobile, turn off silent mode to hear audio.</footer>
     </div>
   )
 }
