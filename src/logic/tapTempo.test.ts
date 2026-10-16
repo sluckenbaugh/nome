@@ -33,7 +33,7 @@ describe('TapTempo', () => {
   })
 
   it('clamps very fast or slow tapping to the tempo range', () => {
-    expect(tapAt(new TapTempo(), [0, 50]).at(-1)).toBe(300)
+    expect(tapAt(new TapTempo(), [0, 50]).at(-1)).toBe(400)
     expect(tapAt(new TapTempo(), [0, 1999]).at(-1)).toBe(30)
   })
 })

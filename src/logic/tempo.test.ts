@@ -22,7 +22,7 @@ describe('halve / double', () => {
   })
   it('clamps at the range edges', () => {
     expect(halveBpm(30)).toBe(MIN_BPM)
-    expect(doubleBpm(200)).toBe(MAX_BPM)
+    expect(doubleBpm(250)).toBe(MAX_BPM)
   })
 })
 
@@ -31,6 +31,8 @@ describe('isBpm', () => {
     expect(isBpm(120)).toBe(true)
     expect(isBpm(120.5)).toBe(false)
     expect(isBpm(10)).toBe(false)
+    expect(isBpm(400)).toBe(true)
+    expect(isBpm(401)).toBe(false)
     expect(isBpm('120')).toBe(false)
   })
 })

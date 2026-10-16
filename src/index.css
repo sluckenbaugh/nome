@@ -14,7 +14,7 @@
 :root {
   /* Desktop behind the window: sky blue by day, twilight indigo (the sky at dusk) in dark mode. */
   --nome-page: #b0def3;
-  --nome-page-dot: #a3d5ec;
+  --nome-page-dot: #92c8e2;
   /* Window/menu outlines and the hard drop shadow. */
   --nome-line: #2b261d;
   --nome-shadow: #2b261d;
@@ -40,7 +40,7 @@
 
 .dark {
   --nome-page: #1d1a36;
-  --nome-page-dot: #24203f;
+  --nome-page-dot: #2e2955;
   --nome-line: #8c7f63;
   --nome-shadow: #000;
   --nome-panel: #332d24;
