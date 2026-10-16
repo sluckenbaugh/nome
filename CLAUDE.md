@@ -87,7 +87,7 @@ The engine uses the lookahead scheduler from Chris Wilson's article "A Tale of T
 
 ## Visual design (warm early-Mac)
 
-The app looks like a classic Mac application in a warm beige palette with a green accent: `#5ebd3e` (the green from Apple's original rainbow logo) in light mode, with `accent-deep` `#2f7d24` for green text on light backgrounds, and coral `#ff8a65` in dark mode (a warm "sunset" against the twilight indigo desktop), built on the `styling` branch. It started as a "vintage hardware" design and was reworked to feel like software rather than physical gear. The controls are flat: 1px outlines, no bevels, glows or drop shadows inside the window, and pressed or "on" states shown by inverting the colours.
+The app looks like a classic Mac application in a warm beige palette with a green accent: `#5ebd3e` (the green from Apple's original rainbow logo) in light mode, with `accent-deep` `#2f7d24` for green text on light backgrounds, and a cool light grey `#c8cbd2` in dark mode (cool so it stays distinct from the warm cream ink), built on the `styling` branch. It started as a "vintage hardware" design and was reworked to feel like software rather than physical gear. The controls are flat: 1px outlines, no bevels, glows or drop shadows inside the window, and pressed or "on" states shown by inverting the colours.
 
 - **Page and chrome:**
   - A dithered `.desktop` pattern fills the page: sky blue (`#b0def3`) in light mode, twilight indigo (`#1d1a36`, the sky at dusk) in dark mode. Text placed directly on it (the footer) uses `text-ink`; `ink-muted` is too faint on the blue.
