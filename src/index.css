@@ -13,8 +13,8 @@
  */
 :root {
   /* Desktop behind the window: sky blue by day, night-sky navy in dark mode. */
-  --nome-page: #87ceeb;
-  --nome-page-dot: #7ac2e2;
+  --nome-page: #b0def3;
+  --nome-page-dot: #a3d5ec;
   /* Window/menu outlines and the hard drop shadow. */
   --nome-line: #2b261d;
   --nome-shadow: #2b261d;
