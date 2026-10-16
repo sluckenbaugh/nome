@@ -17,24 +17,19 @@ export function TempoControl({ bpm, onChange, tapKey, beatLight }: Props) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-stretch gap-3">
-        {/* Recessed LCD: faint unlit "888" segments sit behind the editable lit digits. */}
-        <label className="relative flex flex-1 flex-col justify-center rounded-[4px] border border-line bg-lcd px-3 py-2">
-          <span className="relative ml-auto font-lcd text-[2.6rem] leading-none">
-            <span aria-hidden className="text-lcd-on/10">
-              888
-            </span>
-            <CommitNumberInput
-              min={MIN_BPM}
-              max={MAX_BPM}
-              value={bpm}
-              onCommit={(value) => onChange(clampBpm(value))}
-              className="absolute inset-0 w-full bg-transparent text-right font-lcd text-lcd-on caret-lcd-on outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
-              aria-label="Tempo in beats per minute"
-            />
-          </span>
-          <span className="mt-1 flex items-center justify-between">
+        {/* Classic text field: editable tempo in the pixel font, beat light and units underneath. */}
+        <label className="flex min-w-0 flex-1 flex-col justify-center rounded-[4px] border border-line bg-key px-3 py-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-amber">
+          <CommitNumberInput
+            min={MIN_BPM}
+            max={MAX_BPM}
+            value={bpm}
+            onCommit={(value) => onChange(clampBpm(value))}
+            className="w-full bg-transparent text-right font-pixel text-5xl leading-none font-bold text-ink caret-amber outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none"
+            aria-label="Tempo in beats per minute"
+          />
+          <span className="mt-1.5 flex items-center justify-between">
             {beatLight}
-            <span className="text-[10px] font-bold tracking-[0.2em] text-lcd-on/60">BPM</span>
+            <span className="text-[10px] font-bold tracking-[0.2em] text-ink-muted">BPM</span>
           </span>
         </label>
 

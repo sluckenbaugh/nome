@@ -94,11 +94,10 @@ The app looks like a classic Mac application in a warm beige/amber palette, buil
   - A sticky classic menu bar (`MenuBar`) sits at the top: ".nome", then a **Sound** menu (kits, duplicating the Sound dropdown) and a **View** menu (Light / Dark / Match System).
   - The app sits in a `Window`: a pinstriped title bar with a decorative close box and the title "Metronome", a 1px outline and a hard offset shadow (`--color-shadow`), with square corners.
   - Sections are classic group boxes (`Module`): a thin outline with the title (pixel font) sitting in the top border.
-- **Colours:** defined once as CSS variables in `src/index.css` (`--nome-*`, with dark overrides under `.dark`) and exposed to Tailwind via `@theme inline` as `page`, `line`, `shadow`, `body`, `panel`, `ink`, `ink-muted`, `rule`, `key`, `amber`, `amber-deep`, `lcd`, `lcd-on`. Use these names (`bg-panel`, `border-line`, ...); don't use raw Tailwind palette colours (zinc, indigo, ...).
+- **Colours:** defined once as CSS variables in `src/index.css` (`--nome-*`, with dark overrides under `.dark`) and exposed to Tailwind via `@theme inline` as `page`, `line`, `shadow`, `body`, `panel`, `ink`, `ink-muted`, `rule`, `key`, `amber`, `amber-deep`, `lcd` (near-black in both themes). Use these names (`bg-panel`, `border-line`, ...); don't use raw Tailwind palette colours (zinc, indigo, ...).
 - **Fonts:**
-  - Pixelify Sans (`font-pixel`, latin 500/700) for the menu bar, window title and group-box titles only.
+  - Pixelify Sans (`font-pixel`, latin 500/700) for the menu bar, window title, group-box titles, and the tempo and step-count numbers.
   - Barlow Condensed (latin 500/600/700) for everything else.
-  - DSEG7 Classic Bold (`font-lcd`) for LCD digits; it's vendored in `src/assets/fonts/dseg7/` with its OFL licence.
   - All are bundled, with no Google Fonts requests.
 - **Shared pieces:**
   - `src/components/ui.ts`: `KEY_BASE` (flat rounded rectangle with a 1px outline that inverts while pressed; no colours or alignment), `KEY_FACE` (standard colours), `KEY_INVERTED` (latched on / on the beat), `KEY` (base + face + centred), `KEY_SM` and `SILKSCREEN` (small uppercase labels). Pick one face per state instead of layering a state class on top of another face. When a key needs different colours or size, combine `KEY_BASE` with its own classes rather than overriding `KEY`/`KEY_SM`, because conflicting Tailwind utilities (e.g. `h-9` vs `h-6`, `bg-key` vs `bg-amber`) don't reliably override each other.
@@ -106,10 +105,10 @@ The app looks like a classic Mac application in a warm beige/amber palette, buil
   - In `index.css`: `.fader` (classic flat slider: an outlined track with a plain thumb that inverts while dragged), `.dither` (50% grey dither), `.desktop` and `.title-stripes`.
 - **Inverted colours in dark mode:** `ink` is light in dark mode, so "inverted" (`bg-ink`) becomes a cream fill. Where amber text has to sit on a dark fill in both themes (Start while playing, accent pads on their beat), use `bg-lcd` instead.
 - **Start key:** amber, wrapped in the classic default-button ring. While playing it turns near-black (`bg-lcd`) with amber text, and its LED lights red.
-- **LCDs:** flat near-black boxes with a 1px outline and no glow. The tempo display shows faint unlit `888` segments behind the editable digits, a `BeatLight` bottom-left and "BPM" bottom-right. The step count is a small LCD too.
+- **Number fields:** the tempo and step count are classic Mac text fields (cream `bg-key`, 1px outline, an amber focus outline) with the number in bold `font-pixel`. The tempo field has a `BeatLight` bottom-left and "BPM" bottom-right. (They replaced earlier 7-segment LCD displays.)
 - **Beat feedback:**
   - The LED above the current pad lights, and the pad flashes inverted (accents go near-black with an amber ▲). On a dropped beat the LED shows a hollow ring and the pad doesn't invert.
-  - `BeatLight` flashes once per beat: brighter on accents, a hollow ring on dropped beats, and nothing on muted steps. It restarts by remounting on the engine's `ActiveBeat.count`, which increases every beat, so repeats of the same step still flash.
+  - `BeatLight` (a flat outlined dot) flashes amber once per beat: brighter on accents, a hollow ring on dropped beats, and nothing on muted steps. It restarts by remounting on the engine's `ActiveBeat.count`, which increases every beat, so repeats of the same step still flash.
 - **Pads:** accent pads are solid amber with ▲, normal pads are plain keys, and muted pads use the grey `.dither` with "MUTE". Each pad shows its step number.
 - **Menus and keys:** `MenuBar` handles its own keys and stops Space/Enter inside an open menu from reaching the global shortcuts, like `Select`. Focus moves into the menu on open and returns to the menu title on Esc or after choosing.
 

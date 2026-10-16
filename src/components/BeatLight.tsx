@@ -16,14 +16,14 @@ export function BeatLight({ beat, steps }: Props) {
     beat.step < 0 || state === 'mute'
       ? null
       : beat.dropped
-        ? 'border-2 border-lcd-on'
+        ? 'border-2 border-amber'
         : state === 'accent'
-          ? 'bg-lcd-on'
-          : 'bg-lcd-on/60'
+          ? 'bg-amber'
+          : 'bg-amber/60'
 
   return (
-    <span aria-hidden className="relative inline-block size-2.5 rounded-full bg-lcd-on/10">
-      {flash && <span key={beat.count} className={`beat-flash absolute inset-0 rounded-full ${flash}`} />}
+    <span aria-hidden className="relative inline-block size-2.5 rounded-full border border-ink-muted/60">
+      {flash && <span key={beat.count} className={`beat-flash absolute -inset-px rounded-full ${flash}`} />}
     </span>
   )
 }

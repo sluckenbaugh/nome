@@ -8,13 +8,6 @@
 /* Dark mode is driven by a `dark` class on <html> (see useTheme) so users can override the OS setting. */
 @custom-variant dark (&:where(.dark, .dark *));
 
-@font-face {
-  font-family: "DSEG7 Classic";
-  src: url("./assets/fonts/dseg7/DSEG7Classic-Bold.woff2") format("woff2");
-  font-weight: 700;
-  font-display: block;
-}
-
 /*
  * Warm palette applied to classic-Mac window chrome. Components use these as Tailwind colours (bg-panel, text-ink, ...),
  * so the whole look can be retuned here. Dark values swap in under `.dark`.
@@ -34,7 +27,6 @@
   --nome-amber: #f2a20c;
   --nome-amber-deep: #c47f00;
   --nome-lcd: #1a1712;
-  --nome-lcd-on: #ffb000;
 }
 
 .dark {
@@ -63,10 +55,8 @@
   --color-amber: var(--nome-amber);
   --color-amber-deep: var(--nome-amber-deep);
   --color-lcd: var(--nome-lcd);
-  --color-lcd-on: var(--nome-lcd-on);
 
   --font-sans: "Barlow Condensed", ui-sans-serif, system-ui, sans-serif;
-  --font-lcd: "DSEG7 Classic", ui-monospace, monospace;
   --font-pixel: "Pixelify Sans", ui-monospace, monospace;
 }
 
