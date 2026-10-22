@@ -78,7 +78,8 @@ src/
     useTapTempo.ts        # tap(timeMs) → BPM via TapTempo, plus flash state
     useKeyboardShortcuts.ts # global Space → start/stop, Enter → tap
   components/             # presentational: TempoControl, StepGrid, DropsControl, SoundSelect, Select, SliderRow, CommitNumberInput, StartStopButton,
-                          # TapTempoButton, VolumeFader, Page, Window, Module, MenuBar, PlayingIndicator, Led, BeatLight
+                          # TapTempoButton, VolumeFader, Page, Window, Module, MenuBar, PlayingIndicator, Led, BeatLight,
+                          # YouTubeEmbed (click-to-load youtube-nocookie player, used by the Guide)
   App.tsx                 # page frame for every route: desktop, MenuBar, <Routes>, footer; global shortcuts; scroll to top on navigation
 ```
 

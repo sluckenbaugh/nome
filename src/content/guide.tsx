@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react'
+import walkthroughPoster from '../assets/video/walkthrough-poster.jpg'
+import { YouTubeEmbed } from '../components/YouTubeEmbed'
 
 export interface GuideSection {
   /** Used for the box's heading and as a stable id (e.g. for links like /guide#tempo). */
@@ -24,10 +26,18 @@ export const GUIDE_SECTIONS: GuideSection[] = [
           <strong>Nome is not a drum machine,</strong>
         </p>
         <p>
-          but it is inspired by them. Drum machines can be a great tool for musicians in the shed looking to improve their internal clock. They afford the user the ability to create an “arrangement” through a step sequencer instead of a rigid, constant click. Nome takes this idea and melds it into a simpler tool specifically designed for practice. Nome features a step sequencer (up to 16 steps) that can be customized and even randomized. Each step can be muted, accented or deleted. Instead of being confined to pre-defined time signatures and subdivisions, this sequencer approach is more or less a blank canvas, malleable to the needs of your current musical exploration. 
+          but it is inspired by them. Drum machines can be a great tool for musicians in the shed looking to improve their internal clock. They afford the user the ability to create an “arrangement” through a step sequencer instead of a rigid, constant click. Nome takes this idea and melds it into a simpler tool specifically designed for practice. Nome features a step sequencer (up to 16 steps) that can be customized and even randomized. Each step can be muted, accented or deleted. Instead of being confined to pre-defined time signatures and subdivisions, this sequencer approach is more or less a blank canvas, malleable to the needs of your current musical exploration. <strong>Check out the video below</strong> for practice tips and inspiration. 
         </p>
         <br />
         <p>And Remember, great time is not about playing perfectly on each click but being perfectly cozy in the silence between them. Happy practicing!</p>
+        <h3>Cultivating Great Musical Timing With Silence - A Guide To Nome</h3>
+        <div className="mt-2">
+          <YouTubeEmbed
+            videoId="-TLpN2zGAwA"
+            title="Cultivating Great Musical Timing With Silence - A Guide To Nome"
+            poster={walkthroughPoster}
+          />
+        </div>
       </article>
     ),
   },
@@ -71,7 +81,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
         <br />
         <br />
         <p>
-          The percentage slider indicates the probability that a step will be "dropped" with no drops at 0% and all steps dropped at 100%. The sweetspot tends to be between 20% and 50% depending on tempo.
+          The percentage slider indicates the probability that a step will be "dropped" with no drops at 0% and all steps dropped at 100%. The sweetspot tends to be between 15% and 50% depending on tempo.
         </p>
       </article>
     ),
