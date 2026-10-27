@@ -1,12 +1,16 @@
 import { useEffect, useRef, type KeyboardEvent } from 'react'
+import { canBypassSilentMode } from '../audio/audioSession'
 import { KEY_SM } from './ui'
 import { Window } from './Window'
 
 const SEEN_KEY = 'nome:silent-notice-seen'
 
-/** Touch devices (phones, tablets) are the ones with a silent mode that mutes Web Audio. */
+/**
+ * Touch devices (phones, tablets) are the ones with a silent mode that mutes Web Audio, unless the
+ * browser lets the engine switch to a playback audio session.
+ */
 function shouldShow(): boolean {
-  if (!window.matchMedia('(pointer: coarse)').matches) return false
+  if (!window.matchMedia('(pointer: coarse)').matches || canBypassSilentMode()) return false
   try {
     return sessionStorage.getItem(SEEN_KEY) === null
   } catch {

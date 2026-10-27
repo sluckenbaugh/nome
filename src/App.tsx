@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { Route, Routes, useLocation } from 'react-router'
+import { canBypassSilentMode } from './audio/audioSession'
 import { SOUND_KITS } from './audio/soundKits'
 import { MenuBar } from './components/MenuBar'
 import { PlayingIndicator } from './components/PlayingIndicator'
@@ -55,7 +56,9 @@ export default function App() {
 
       <SilentModeNotice />
 
-      <footer className="px-4 py-8 text-center text-xs text-ink">Free, no sign-up, no pop-ups, just clicks. On mobile, turn off silent mode to hear audio.</footer>
+      <footer className="px-4 py-8 text-center text-xs text-ink">
+        Free, no sign-up, no pop-ups, just clicks.{canBypassSilentMode() ? '' : ' On mobile, turn off silent mode to hear audio.'}
+      </footer>
     </div>
   )
 }

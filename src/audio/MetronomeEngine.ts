@@ -1,3 +1,4 @@
+import { setPlaybackSession } from './audioSession'
 import { playClick, playSample } from './clicks'
 import { loadKit, type KitSamples } from './samples'
 import { DEFAULT_DROPS, isDropped, type DropSettings } from '../logic/drops'
@@ -128,6 +129,8 @@ export class MetronomeEngine {
   /** Must be called from a user gesture (click/keypress) so the browser allows audio to start. */
   start(): void {
     if (this.running) return
+    // Set before the context starts so iOS doesn't mute it with the silent switch.
+    setPlaybackSession(true)
     const ctx = this.ensureAudio()
     if (ctx.state !== 'running') void ctx.resume()
 
@@ -154,6 +157,7 @@ export class MetronomeEngine {
     this.bus = null
     this.queue = []
     this.setDisplayed(STOPPED)
+    setPlaybackSession(false)
   }
 
   dispose(): void {
